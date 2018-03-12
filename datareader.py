@@ -13,7 +13,3 @@ with open("./Data.txt", "rb") as fp:   # Unpickling
    b = pickle.load(fp)
 
 
-# this is a comment
-#this
-   
-# We are going to split into 4 year increments
