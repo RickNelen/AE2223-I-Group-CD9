@@ -92,7 +92,7 @@ def getbyDelay (data, limits):
     
     filtered  = []
             
-    for line in data
+    for line in data:
         if int(line[3]) > limits[0] and int(line[3]) < limits[1]:
             filtered.append(line)
             
