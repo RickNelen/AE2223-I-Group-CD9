@@ -20,7 +20,7 @@ with open("./DataType2.txt", "rb") as fp2:  # Unpickling list type 2
 with open("./DataType3.txt", "rb") as fp3:  # Unpickling list type 3
     b3 = pickle.load(fp3)
     
-    
+"""   
 ################### DATA TESTS##################################
 print "First, second and last entry type 1 list"
 print b1[0]
@@ -37,7 +37,7 @@ print b3[0]
 print b3[1]
 print b3[-1]
 ################################################################
-   
+ """  
    
    
    
