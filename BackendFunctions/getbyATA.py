@@ -28,3 +28,12 @@ def getbyATA (data, ata):
                 filtered.append(line)
                 
     return filtered
+
+import pickle
+
+with open("../Data.txt", "rb") as fp:   # Unpickling list all types
+   b = pickle.load(fp)
+   
+p = raw_input("ATA#:")   
+
+x = getbyATA(b,p)
