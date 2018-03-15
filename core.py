@@ -5,7 +5,7 @@ Created on Thu Mar 15 16:05:44 2018
 
 @author: Misa
 """
-
+#Author: Till
 def getbyATA (data, ata):
     
     # inputs:
@@ -28,14 +28,36 @@ def getbyATA (data, ata):
                 
     return filtered
 
-def unpickle(data):
+#Author: Misha
+def unpickle(file): # Enter file directory as a "string", use "./filename.txt" if it is in the same folder 
+                    # Use "../filename.txt" if it is one directory above
     
     import pickle
 
-    with open(data, "rb") as fp:   # Unpickling list all types
+    with open(file, "rb") as fp:
         Rawdata = pickle.load(fp)
         
     return Rawdata
 
+#Author: Misha
+def pickle(file,data):  # Enter file directory as a "string", use "./filename.txt" if it is in the same folder 
+                        # Use "../filename.txt" if it is one directory above
+                        # Data is the list that is to be saved
+                        # This creats a new file if it does not find an existing one with the name given
+    
+    import pickle
+    
+    with open(file, "wb+") as fp:
+        pickle.dump(data, fp)
+        
+#Author: Misha
+def datetosec(year,month,day): 
+    
+    import calendar
 
-x = unpickle("./Data.txt")
+    utc = (year, month, day, 0,0,0)
+    timestamp = calendar.timegm(utc)
+    
+    return timestamp
+
+
