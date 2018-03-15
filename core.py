@@ -32,7 +32,7 @@ def getbyATA (data, ata):
                 
     return filtered
     
-    
+ #Author: Till   
 def getbyType (data, actype):
     # gets all lines in a data list that are concerning one specific aircraft type
     # I/Os
@@ -53,7 +53,7 @@ def getbyType (data, actype):
             
     return filtered
     
-    
+#Author: Till 
 def getbySerial (data, serial):
     # gets all lines in a data list that are concerning one specific aircraft type
     # I/Os
@@ -74,7 +74,7 @@ def getbySerial (data, serial):
             
     return filtered
     
-    
+#Author: Till 
 def getbyDelay (data, limits):
     # gets all lines in a data list that are concerning one specific aircraft type
     # I/Os
@@ -95,7 +95,7 @@ def getbyDelay (data, limits):
             
     return filtered
     
-    
+#Author: Till 
 def getbyCancelled (data, cancelled):
     # gets all lines in a data list that are concerning one specific aircraft type
     # I/Os
@@ -110,15 +110,11 @@ def getbyCancelled (data, cancelled):
     
     filtered  = []
             
-    for line in data
-        if int(line[4]) == cancelled
+    for line in data:
+        if int(line[4]) == cancelled:
             filtered.append(line)
             
     return filtered
-    
-    
-####### pickling ########
-    
     
 #Author: Misha
 def unpickle(file): # Enter file directory as a "string", use "./filename.txt" if it is in the same folder 
