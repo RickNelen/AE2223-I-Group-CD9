@@ -34,7 +34,7 @@ def getbyATA (data, ata):
     
 #Author: Till   
 def getbyType (data, actype):
-    # gets all lines in a data list that are concerning one specific aircraft type
+    #l lines in a data list that are concerning one specific aircraft type
     # I/Os
 
     # inputs:
@@ -162,9 +162,8 @@ def hisplot(ATA,Type,Time,max): #ATA is the ATA number to be used in list form [
     b = unpickle("./Data.txt")
     
     xx = ATA
-    yy = Type
     tt = Time
-    
+    yy = Type
     k = []
     
     for i in range(len(xx)):
@@ -258,7 +257,7 @@ def getbyDate(data,yearrange):  #data is the usual data set
     return filtered
         
 #Author: Misha 
-def findunigue(data,serial_ata,digits):    #Data is in the usual format
+def findunique(data,serial_ata,digits):    #Data is in the usual format
                                     #Serial_ata is 1 or 0, o for serial num and 1 for ata
                                     #Returns a list of all unique values
     
