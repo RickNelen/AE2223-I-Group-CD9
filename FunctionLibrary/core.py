@@ -5,6 +5,8 @@ Created on Thu Mar 15 16:05:44 2018
 
 @author: Misa
 """
+
+
 #Author: Till
 def getbyATA (data, ata):
     
@@ -32,7 +34,7 @@ def getbyATA (data, ata):
                 
     return filtered
     
- #Author: Till   
+#Author: Till   
 def getbyType (data, actype):
     # gets all lines in a data list that are concerning one specific aircraft type
     # I/Os
@@ -148,4 +150,140 @@ def datetosec(year,month,day):
     
     return timestamp
 
+#Author: Misha
+def hisplot(ATA,Type,Time,max): #ATA is the ATA number to be used in list form [1,2,3]
+                                #Type is the type to be used in list form [1,2,3]
+                                #Time is a list within a list [[1990,1995],[2010,2015]]
+                                #Make sure that all the lists given have the same length
+                                #If only one graph is wanted enter that data between square brackets [number]
+                                #If certain filtering is not needed then type 0 in square brackets [0] use [0,0] for time
+                                #Max is the maximum value displayed on the x axis 
+    
+    import matplotlib.pyplot as plt
+    
+    b = unpickle("./Data.txt")
+    
+    xx = ATA
+    yy = Type
+    tt = Time
+    
+    k = []
+    
+    for i in range(len(xx)):
+        
+        x = xx[i]
+        y = yy[i]
+        t = tt[i]
+        
+        data = b
+        
+        if x != 0:
+            data = getbyATA(data,int(x))
+        if y != 0:
+            data = getbyType(data,int(y))
+        if t != [0,0]:
+            data = getbyDate(data,t)
+    
+        array = []
+        
+        for i in range(len(data)):
+            array.append(data[i][3])
+        
+        k.append(array)
+        
+    plt.close(1)
+    
+    if len(xx) == 1:
+            array = k[0]
+            array.sort()
+            le = len(array)
+            if le <= max:
+                True
+            else:
+                t = 0
+                while array[t] <= max:
+                    t += 1
+            mean = sum(array)/le
+            median = array[int(le/2)]
+            string =  str(str(xx[0])+"-"+str(yy[0])+", "+str(tt[0])+" A: "+str(mean)+" M: "+str(median))
+            plt.hist(array, bins=x,range=(1,max))
+            plt.title(string)
+            plt.show()
+    
+    else:
+        fig = plt.figure(num=1, figsize=(18, 12), dpi=80)
+        nu = len(xx)
+        ar = [[1,2],[2,2],[2,3],[3,3],[3,4]]
+        ara = [2,4,6,9,12]
+        e = 0
+        while nu > ara[e]:
+                e +=1
+        
+        for i in range(len(xx)):
+            k[i].sort()
+            le = len(k[i])
+            if le <= max:
+                True
+            else:
+                t = 0
+                while k[i][t] <= max:
+                    t += 1
+            mean = sum(k[i])/le
+            median = k[i][int(le/2)]
+            ax = fig.add_subplot(ar[e][0],ar[e][1],i+1)
+            ax.hist(k[i], bins="auto",range=(1,max))
+            string = str(str(xx[i])+"-"+str(yy[i])+", "+str(tt[i])+" A: "+str(mean)+" M: "+str(median))
+            ax.set_title(string)
+            
+        plt.tight_layout()
+        plt.show()
+  
+#Author: Misha      
+def getbyDate(data,yearrange):  #data is the usual data set
+                                #Yearrange is give as a lsit with 2 entries [2000,2010]
+    
+    import calendar
 
+    x = yearrange
+    y = []
+    filtered = []
+    
+    for i in range(2):
+        utc = (x[i], 1, 1, 0,0,0)
+        ts = calendar.timegm(utc)
+        y.append(ts)
+    
+    for line in data:
+        if line[2] >= y[0] and line[2] <= y[1]:
+            filtered.append(line)
+        
+    return filtered
+        
+#Author: Misha 
+def findunique(data,serial_ata):    #Data is in the usual format
+                                    #Serial_ata is 1 or 0, o for serial num and 1 for ata
+                                    #Returns a list of all unique values
+    
+    flat = []
+
+    if serial_ata == 0:
+        for i in range(len(data)):
+            flat.append(data[i][0])
+            
+    if serial_ata == 1:
+        for i in range(len(data)):
+            data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:11])]
+            data[i][5] = int(data[i][5])
+        for i in range(len(data)):
+            flat.append(data[i][5])
+        
+    ls = set(flat)
+    ul = (list(ls))
+    
+    ul.sort()
+    
+    return ul
+    
+    
+    
+    
