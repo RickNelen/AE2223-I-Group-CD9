@@ -159,7 +159,7 @@ def hisplot(ATA,Type,Time,max): #ATA is the ATA number to be used in list form [
     
     import matplotlib.pyplot as plt
     
-    b = unpickle("../Data.txt")
+    b = unpickle("./Data.txt")
     
     xx = ATA
     yy = Type
