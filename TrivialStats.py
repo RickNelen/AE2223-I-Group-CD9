@@ -11,6 +11,7 @@ import datetime
 import matplotlib.pyplot as plt
 import FunctionLibrary.filters as filters
 import operator
+import pickle
 
 # Read the csv and generate the Data.txt pickle
 #import FunctionLibrary.genPickle
@@ -63,15 +64,13 @@ subset = np.concatenate((np.array(filters.getbySerial (b, 11257)),  np.zeros( [l
 subset[:,-1] = subset[:,-7]*10 + subset[:,-6]
 
 atas = list(set(subset[:,-1])) # list of distinct ata numbers
+atas2 = [] # the ata numbers that have more than 1 failure
 
-tbf = []
-i = 0
+tbf = [] # holds time between failures for each ata number
 for ata in atas:
     if len(np.array(filters.getbyATA (subset, int(ata)))) > 1:
         tbf.append(np.diff(np.array(filters.getbyATA (subset, int(ata)))[:,2]) / (24.*3600))
-    else:        
-        del atas[i]
-    i += 1
+        atas2.append(ata)
 
 """
 # find ATA with most occurences; useless, since it is always 0 in the data...
@@ -82,12 +81,23 @@ for line in tbf:
 idval, value = max(enumerate(lengths), key=operator.itemgetter(1))
 """
 
-component = 14 # component in atas list
-x = np.arange(1,len(tbf[component])+1)
-y = tbf[component]
-fig, ax = plt.subplots()
-ax.scatter(x, y)
-plt.show
+#component = 11 # component in atas list
+hist = []
+for component in range(0,len(atas2)):
+    print atas2[component]
+    
+    """
+    x = np.arange(1,len(tbf[component])+1)
+    y = tbf[component]
+    fig, ax = plt.subplots()
+    ax.scatter(x, y)
+    plt.show
+    """
+    # histogram with bins 0-10, 10-20 etc until 100
+    hist.append(np.histogram(tbf[component], bins=np.arange(0,100,10), range=(0.,100.)) )
+    fig, ax = plt.subplots()
+    ax.bar(hist[component][1][0:-1],hist[component][0],width=10)
+    plt.show
 
 # ToDo: Check with more planes/ATAs, that often the TBF is almost zeros or rather large never in between
 # fit some sort of bi-modal distribution through some (find out what "some" means in the context). Find out how to come of with a confidence bound until
