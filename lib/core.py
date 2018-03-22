@@ -258,7 +258,7 @@ def getbyDate(data,yearrange):  #data is the usual data set
     return filtered
         
 #Author: Misha 
-def findunigue(data,serial_ata):    #Data is in the usual format
+def findunigue(data,serial_ata,digits):    #Data is in the usual format
                                     #Serial_ata is 1 or 0, o for serial num and 1 for ata
                                     #Returns a list of all unique values
     
@@ -268,9 +268,11 @@ def findunigue(data,serial_ata):    #Data is in the usual format
         for i in range(len(data)):
             flat.append(data[i][0])
             
+    j = 5+digits
+    
     if serial_ata == 1:
         for i in range(len(data)):
-            data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:11])]
+            data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])]
             data[i][5] = int(data[i][5])
         for i in range(len(data)):
             flat.append(data[i][5])
@@ -281,7 +283,18 @@ def findunigue(data,serial_ata):    #Data is in the usual format
     ul.sort()
     
     return ul
+ 
+#Author: Misha      
+def sortata(data,digits):
+
+    j = 5+digits
     
+    for i in range(len(data)):
+        data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])]
+        data[i][5] = int(data[i][5])
+       
+    data.sort(key=lambda x: x[5])
     
+    return data
     
     
