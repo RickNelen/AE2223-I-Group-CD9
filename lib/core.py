@@ -283,7 +283,7 @@ def getbyDate(data,yearrange):  #data is the usual data set
     return filtered
         
 #Author: Misha 
-def findunique(data,serial_ata):    #Data is in the usual format
+def findunique(data,serial_ata,digits):    #Data is in the usual format
                                     #Serial_ata is 1 or 0, o for serial num and 1 for ata
                                     #Returns a list of all unique values
     

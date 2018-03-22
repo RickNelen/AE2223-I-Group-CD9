@@ -104,10 +104,8 @@ def bytype(dataset, top_x):
         byserial(intermediate, len(intermediate), 0)
         final_ranked_list.append(intermediate)
         counter += 1
-"""Still have to work on it. Kind of fucked up"""            
-        
-        
     return final_ranked_list
+"""Still have to work on it. Kind of fucked up"""
 
 def bydate(dataset, top_x):
     #Note that this takes the unix values. therefore, it's not readable. 
@@ -186,7 +184,7 @@ def model(beta, x):
 
 
 
-def lstsquares(model, n, beta, data, h):
+def lstsquares(model, n, beta, data, h=1e-4):
     
     ## load modules
     import numpy as np
@@ -196,7 +194,6 @@ def lstsquares(model, n, beta, data, h):
     ## Computations
     def r(beta,x,y): return y - model(beta,x); # parametric error function, y and x must be same length vectors. beta is vector too, of course
     
-    ## helper functions
     def jacobian(fun,x,beta,h):
         # computes the jacobian for the Newton Gau? Method
         # works in a loop and computes every partial derivative with the finite
@@ -243,6 +240,25 @@ def lstsquares(model, n, beta, data, h):
     return (gamma, pval, itern)
     
     
+    ## helper functions
+    
+    def jacobian(fun,x,beta,h):
+        # computes the jacobian for the Newton Gau? Method
+        # works in a loop and computes every partial derivative with the finite
+        # difference method, which probably is slower than it could be, but I 
+        # couldn't come up with something better
+    
+        n = len(beta) # dimensions of the Jacobian, m rows, n columns
+        m = len(x)
+        
+        J = np.zeros([n,n])
+        for i in range(m):
+            for j in range(n):
+                helper    = np.matrix(np.zeros([n,1]));
+                helper[j] = 1; # helper helps to change only the entry in the beta vector that must be considered
+                zeta1     = beta + 0.5* h*helper; # finite difference method with central differences
+                zeta2     = beta - 0.5* h*helper;
+                J[i,j]    = (fun(zeta1,x(i),1)-fun(zeta2,x(i),1))/h;
 
 
     

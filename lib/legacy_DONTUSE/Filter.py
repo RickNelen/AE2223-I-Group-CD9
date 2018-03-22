@@ -18,7 +18,7 @@ import pickle
 import datetime
 import time
 
-with open("./Data.txt", "rb") as fp:   # Unpickling
+with open("../../Data.txt", "rb") as fp:   # Unpickling
    b = pickle.load(fp)
 
 """
@@ -66,8 +66,10 @@ def extract(b, year0, year1):
             lst.append(b[k])
             k += 1
         else:
-            k+=1
+            k += 1
     return lst
+
+
 #Creating List Within Library
 Step_size = 3 #<------ To edit must be factor of 30 bitch
 obj = {}
