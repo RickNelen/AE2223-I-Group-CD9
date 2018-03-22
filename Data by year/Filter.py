@@ -3,6 +3,8 @@
 """
 Created on Mon Mar 12 16:28:14 2018
 
+--> filters by year by coverting the unix time to a year string ('%Y')
+
 @author: Misa
 """
 
