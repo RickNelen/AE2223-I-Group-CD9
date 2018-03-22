@@ -5,8 +5,6 @@ Created on Thu Mar 15 16:05:44 2018
 
 @author: Misa
 """
-
-
 #Author: Till
 def getbyATA (data, ata):
     
@@ -36,7 +34,7 @@ def getbyATA (data, ata):
     
 #Author: Till   
 def getbyType (data, actype):
-    # gets all lines in a data list that are concerning one specific aircraft type
+    #l lines in a data list that are concerning one specific aircraft type
     # I/Os
 
     # inputs:
@@ -164,9 +162,8 @@ def hisplot(ATA,Type,Time,max): #ATA is the ATA number to be used in list form [
     b = unpickle("./Data.txt")
     
     xx = ATA
-    yy = Type
     tt = Time
-    
+    yy = Type
     k = []
     
     for i in range(len(xx)):
@@ -260,7 +257,7 @@ def getbyDate(data,yearrange):  #data is the usual data set
     return filtered
         
 #Author: Misha 
-def findunique(data,serial_ata):    #Data is in the usual format
+def findunique(data,serial_ata,digits):    #Data is in the usual format
                                     #Serial_ata is 1 or 0, o for serial num and 1 for ata
                                     #Returns a list of all unique values
     
@@ -270,9 +267,11 @@ def findunique(data,serial_ata):    #Data is in the usual format
         for i in range(len(data)):
             flat.append(data[i][0])
             
+    j = 5+digits
+    
     if serial_ata == 1:
         for i in range(len(data)):
-            data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:11])]
+            data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])]
             data[i][5] = int(data[i][5])
         for i in range(len(data)):
             flat.append(data[i][5])
@@ -283,7 +282,18 @@ def findunique(data,serial_ata):    #Data is in the usual format
     ul.sort()
     
     return ul
+ 
+#Author: Misha      
+def sortata(data,digits):
+
+    j = 5+digits
     
+    for i in range(len(data)):
+        data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])]
+        data[i][5] = int(data[i][5])
+       
+    data.sort(key=lambda x: x[5])
     
+    return data
     
     

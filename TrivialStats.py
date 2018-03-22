@@ -9,7 +9,7 @@ import numpy as np
 import time
 import datetime
 import matplotlib.pyplot as plt
-import FunctionLibrary.filters as filters
+import lib.core as core
 import operator
 import pickle
 
