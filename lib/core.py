@@ -5,8 +5,6 @@ Created on Thu Mar 15 16:05:44 2018
 
 @author: Misa
 """
-
-
 #Author: Till
 def getbyATA (data, ata):
     
@@ -161,7 +159,7 @@ def hisplot(ATA,Type,Time,max): #ATA is the ATA number to be used in list form [
     
     import matplotlib.pyplot as plt
     
-    b = unpickle("./Data.txt")
+    b = unpickle("../Data.txt")
     
     xx = ATA
     yy = Type
@@ -260,7 +258,7 @@ def getbyDate(data,yearrange):  #data is the usual data set
     return filtered
         
 #Author: Misha 
-def findunique(data,serial_ata):    #Data is in the usual format
+def findunigue(data,serial_ata):    #Data is in the usual format
                                     #Serial_ata is 1 or 0, o for serial num and 1 for ata
                                     #Returns a list of all unique values
     
