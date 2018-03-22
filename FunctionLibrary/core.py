@@ -5,6 +5,8 @@ Created on Thu Mar 15 16:05:44 2018
 
 @author: Misa
 """
+
+
 #Author: Till
 def getbyATA (data, ata):
     
@@ -32,7 +34,7 @@ def getbyATA (data, ata):
                 
     return filtered
     
- #Author: Till   
+#Author: Till   
 def getbyType (data, actype):
     # gets all lines in a data list that are concerning one specific aircraft type
     # I/Os

@@ -94,9 +94,9 @@ for component in range(0,len(atas2)):
     plt.show
     """
     # histogram with bins 0-10, 10-20 etc until 100
-    hist.append(np.histogram(tbf[component], bins=np.arange(0,100,10), range=(0.,100.)) )
+    hist.append(np.histogram(tbf[component], bins=np.arange(0,30,3), range=(0.,100.)) )
     fig, ax = plt.subplots()
-    ax.bar(hist[component][1][0:-1],hist[component][0],width=10)
+    ax.bar(hist[component][1][0:-1],hist[component][0],width=3)
     plt.show
 
 # ToDo: Check with more planes/ATAs, that often the TBF is almost zeros or rather large never in between
