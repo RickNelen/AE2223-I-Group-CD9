@@ -236,6 +236,9 @@ def lstsquares(model, n, beta, data, h=1e-4):
         if la.norm(betanew-beta) < h:
             conti = False
             gamma = beta
+        if itern > 100:
+            conti = False
+            gamma = np.array([0,0])
         beta = betanew
     
     
@@ -267,6 +270,7 @@ def fitweibull(histos):
     
     import numpy as np
     import scipy.special as sp # import the special functions for gamma
+    import matplotlib.pyplot as plt
     
     # model function: weibull
     def weibull(beta, x):
@@ -284,19 +288,38 @@ def fitweibull(histos):
         # guess beta[1] = index of max of histo instead of constant [1,20]
         (fb, p, it) = lstsquares(weibull, 2, np.transpose([np.array([1,20])]), np.concatenate( ( np.array([histo[1][1][0:-1]]).T, np.array([histo[1][0]]).T) , axis=1) )
     
-        # calculate mean
-        m = fb[1]*sp.gamma(1+1/fb[0]) # wikipedia: weibull distribution
-    
-        # calculate variance in the weibull fit data
-        v = fb[1]**2 * ( sp.gamma(1+2./fb[0]) - sp.gamma(1+1./fb[0])**2 ) # wikipedia: Weibull distribution
         
-        fitbeta.append(fb)
-        mean.append(m)
-        var.append(v)
-        pval.append(p)
-        iternum.append(it)
+        if not fb[1]:
+            
+            fitbeta.append(np.array([0,0]))
+            mean.append(0)
+            var.append(0)
+            pval.append(0)
+            iternum.append(0)
+        
+        else:
+            # calculate mean
+            m = fb[1]*sp.gamma(1+1/fb[0]) # wikipedia: weibull distribution
+        
+            # calculate variance in the weibull fit data
+            v = fb[1]**2 * ( sp.gamma(1+2./fb[0]) - sp.gamma(1+1./fb[0])**2 ) # wikipedia: Weibull distribution
+            
+            fitbeta.append(fb)
+            mean.append(m)
+            var.append(v)
+            pval.append(p)
+            iternum.append(it)
+        
+            xplot = np.arange(1,600,1)
+            yfit = weibull (fb, xplot)
+            
+            plt.close()
+            plt.plot(xplot,yfit)
+            plt.plot(np.array([histo[1][1][0:-1]]).T, np.array([histo[1][0]]).T)
+            plt.show()
         
         i += 1
+        
     
     return (fitbeta, mean, var, pval, iternum)
     
