@@ -22,8 +22,8 @@ def getbyATA (data, ata):
     # prepare input ata by padding it with zeros if necessary
     
     ata = str(ata)
-    if len(ata)%2: # pad wth leading zero if uneven
-        ata = '0'+ata
+    #if len(ata)%2: # pad wth leading zero if uneven
+    #    ata = '0'+ata
         
     filtered = [] # initiate returned list
     
@@ -191,7 +191,7 @@ def hiscalc(data, ATA, Type, Time, max):
         data = b
         
         if x != 0:
-            data = getbyATA(data,int(x))
+            data = getbyATA(data,str(x))
             
         if y != 0:
             data = getbyType(data,int(y))

@@ -19,8 +19,8 @@ with open("./Data.txt", "rb") as fp:   # Unpickling
    
 t = time.time()
 # generate histograms   
-histos = core.hiscalc(b,[30,31,32,34,35,36],[1,1,1,1,1,1],[[1980,2020],[1980,2020],[1980,2020],[1980,2020],[1980,2020],[1980,2020]],600)
-#histos = core.hiscalc(b,[23],[2],[[1980,2020]],300)
+#histos = core.hiscalc(b,[30,31,32,34,35,36],[1,1,1,1,1,1],[[1980,2020],[1980,2020],[1980,2020],[1980,2020],[1980,2020],[1980,2020]],600)
+histos = core.hiscalc(b,[23],[2],[[1998,2000]],300)
 
 # fit weibulls through each of them 
 print numericals.fitweibull(histos)
