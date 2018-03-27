@@ -19,15 +19,21 @@ def getbyATA (data, ata):
     # output:
     #   filtered: list of all sublists in the data list that comply with the ATA number specified
     
+    # prepare input ata by padding it with zeros if necessary
+    
+    ata = str(ata)
+    if len(ata)%2: # pad wth leading zero if uneven
+        ata = '0'+ata
+        
     filtered = [] # initiate returned list
     
     for line in data:
         i = 0
-        while i < len(str(ata)):
-            if int(line[-6+i]) != int(str(ata)[i]): 
+        while i < len(ata):
+            if int(line[-6+i]) != int(ata[i]): 
                 break  # this breaks out of the while on the first digit mismatch between candidate and ATA number
             i += 1
-            if i == len(str(ata)): # i.e. if all digits match
+            if i == len(ata): # i.e. if all digits match
                 filtered.append(line)
                 
     return filtered
@@ -205,7 +211,7 @@ def hiscalc(data, ATA, Type, Time, max):
 
 
 #Author: Misha
-def hisplot(histos, ATA, Type, Time):
+def hisplot(histos, ATA, Type, Time): # only the histos argument is actually used for computations, the rest is only for printing that info
                          # histos is the output of the hiscalc function
                          # ATA is the ATA number to be used in list form [1,2,3]
                          # Type is the type to be used in list form [1,2,3]

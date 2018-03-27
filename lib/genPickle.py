@@ -34,11 +34,10 @@ with open("../Raw_Delay.csv", 'rU') as csvfile:
                 row[i] = 0
                     
         if appendable:
-            printable = False
+            printable = False # this was for debugging
             ata = str(row[-3])
             if len(ata)%2: # pad wth leading zero if uneven
                 ata = '0'+ata
-                printable = True
             while len(ata) != 6: # enforce a 6 digit ATA number
                 ata = ata+'0'
             del row[-3] # delete old format from data
@@ -48,10 +47,11 @@ with open("../Raw_Delay.csv", 'rU') as csvfile:
             
             row = [int(c) for c in row] # converts stuff to int
             
-            """
+            if row[-6:] == [0,5,0,0,0,0]:
+                printable = True
+            
             if printable:
                 print row
-            """
             
             k.append(row)
 
