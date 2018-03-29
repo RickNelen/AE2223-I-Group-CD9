@@ -23,5 +23,11 @@ for i in range(1,len(k)):
         j.append(c)
         freqlist.append(j)
         c = 0
+    if k[i-1][5] != k[i-2][5]:
+        c = 1
+        j = []
+        j.append(k[i-1][5])
+        j.append(c)
+        c = 0
         
 freqlist = sorted(freqlist,key=lambda x: x[1] ,reverse=True)
