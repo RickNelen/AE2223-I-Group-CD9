@@ -13,7 +13,7 @@ k = core.sortata(k,2)
 
 delaylist = []
 i=0
-c=0
+c=k[0][3]
 h = []
 for i in range(1,len(k)):
     
@@ -25,7 +25,9 @@ for i in range(1,len(k)):
         j.append(k[i-1][5])
         j.append(c)
         delaylist.append(j)     #add [ata,delay]
-        c = 0                   #reset delay to zero for next ata
+        c = k[i][3]                   #reset delay to zero for next ata
         h = []
         
 delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
+
+#Ouput [ata,delaytime]

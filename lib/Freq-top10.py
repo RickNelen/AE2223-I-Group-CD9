@@ -13,21 +13,32 @@ k = core.sortata(k,2)
 
 freqlist = []
 i=0
-c=0
+c=1                                             #need to account for the first line
+cancel = k[1][4]                                #need to account for the first line
+
 for i in range(1,len(k)):
     if k[i][5] == k[i-1][5]:
-        c += 1
+        c += 1                                  #frequency
+        cancel += k[i][4]                       #number of cancellations
     if k[i][5] != k[i-1][5]:
         j = []
-        j.append(k[i-1][5])
+        ratio = round((float(cancel)/c)*100 ,2) #round(number,digits)
+        j.append(k[i-1][5])                     #making the matrix
         j.append(c)
+        j.append(cancel)
+        j.append(ratio)
         freqlist.append(j)
-        c = 0
-    if k[i-1][5] != k[i-2][5]:
-        c = 1
-        j = []
-        j.append(k[i-1][5])
-        j.append(c)
-        c = 0
-        
-freqlist = sorted(freqlist,key=lambda x: x[1] ,reverse=True)
+        c = 1                                   #need to account for the first new
+        cancel = k[i][4]                        #need to accoutn for the first new
+
+            
+r = input("""which column needs to be sorted?"
+              1 = Frequency delays
+              2 = Frequency cancellations 
+              3 = Ratio cancellations over frequency""")
+if r == 1:
+    freqlist = sorted(freqlist,key=lambda x: x[1] ,reverse=True)
+if r == 2:
+    freqlist = sorted(freqlist,key=lambda x: x[2] ,reverse=True)
+if r == 3:
+    freqlist = sorted(freqlist,key=lambda x: x[3] ,reverse=True)
