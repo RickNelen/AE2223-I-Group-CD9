@@ -312,7 +312,8 @@ def findunique(data,serial_ata,digits):    #Data is in the usual format
     ul.sort()
     
     return ul
-    
+   
+#Author: Misha 
 def sortata(data,digits): 
  
     j = 5+digits 
@@ -323,6 +324,7 @@ def sortata(data,digits):
         
     data.sort(key=lambda x: x[5]) 
      
-    return data 
+    k = data
+    return k
     
     
