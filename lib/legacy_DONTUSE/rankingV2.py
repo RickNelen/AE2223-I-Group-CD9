@@ -95,7 +95,7 @@ def bytype(dataset, top_x):
         byserial(intermediate, len(intermediate), 0)
         final_ranked_list.append(intermediate)
         counter += 1
-"""Still have to work on it. Kind of fucked up"""            
+#"""Still have to work on it. Kind of fucked up"""            
         
         
     return final_ranked_list
