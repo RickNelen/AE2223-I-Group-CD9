@@ -313,6 +313,16 @@ def findunique(data,serial_ata,digits):    #Data is in the usual format
     
     return ul
     
-    
+def sortata(data,digits): 
+ 
+    j = 5+digits 
+     
+    for i in range(len(data)): 
+        data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])] 
+        data[i][5] = int(data[i][5]) 
+        
+    data.sort(key=lambda x: x[5]) 
+     
+    return data 
     
     
