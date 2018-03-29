@@ -11,21 +11,21 @@ import core as core
 k = core.unpickle("../Data.txt")
 k = core.sortata(k,2)
 
-freqlist = []
+delaylist = []
 i=0
 c=0
 h = []
 for i in range(1,len(k)):
     
-    if k[i][5] == k[i-1][5]:
-        c += k[i][3]
-        h.append(k[i][3])
-    if k[i][5] != k[i-1][5]:
-        j = []
+    if k[i][5] == k[i-1][5]:    #as long as the ata number is the same as the one befor
+        c += k[i][3]            #adding delaytime
+        h.append(k[i][3])       #statistical stuff
+    if k[i][5] != k[i-1][5]:    #if a new atanumber is reached
+        j = []                  #need list to create matrix
         j.append(k[i-1][5])
         j.append(c)
-        freqlist.append(j)
-        c = 0
+        delaylist.append(j)     #add [ata,delay]
+        c = 0                   #reset delay to zero for next ata
         h = []
         
-freqlist = sorted(freqlist,key=lambda x: x[1] ,reverse=True)
+delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
