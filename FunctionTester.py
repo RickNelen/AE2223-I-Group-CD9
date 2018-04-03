@@ -16,13 +16,14 @@ import time
 with open("./Data.txt", "rb") as fp:   # Unpickling
    b = pickle.load(fp)
    
-   
-t = time.time()
-# generate histograms   
-#histos = core.hiscalc(b,[30,31,32,34,35,36],[1,1,1,1,1,1],[[1980,2020],[1980,2020],[1980,2020],[1980,2020],[1980,2020],[1980,2020]],600)
-histos = core.hiscalc(b,[23],[2],[[1998,2000]],300)
+min = core.datetosec(1986,1,1)
+max = core.datetosec(2017,1,1)
 
-# fit weibulls through each of them 
-print numericals.fitweibull(histos)
-# do stuff
-elapsed = time.time() - t
+c = []
+
+for i in range(len(b)):
+    if b[i][2] > min and b[i][2] < max:
+        c.append(b[i])
+        
+
+
