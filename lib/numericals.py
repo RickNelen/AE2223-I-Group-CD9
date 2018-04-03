@@ -310,13 +310,13 @@ def fitweibull(histos):
             pval.append(p)
             iternum.append(it)
         
-            xplot = np.arange(1,600,1)
-            yfit = weibull (fb, xplot)
-            
-            plt.close()
-            plt.plot(xplot,yfit)
-            plt.plot(np.array([histo[1][1][0:-1]]).T, np.array([histo[1][0]]).T)
-            plt.show()
+#            xplot = np.arange(1,600,1)
+#            yfit = weibull (fb, xplot)
+#            
+#            plt.close()
+#            plt.plot(xplot,yfit)
+#            plt.plot(np.array([histo[1][1][0:-1]]).T, np.array([histo[1][0]]).T)
+#            plt.show()
         
         i += 1
         

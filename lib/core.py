@@ -204,7 +204,7 @@ def hiscalc(data, ATA, Type, Time, max):
         for i in range(len(data)):
             array.append(data[i][3])
             
-        histos.append([np.array(array),np.histogram(array, bins='auto', range=(1,max), density=True)])
+        histos.append([np.array(array),np.histogram(array, bins='auto', range=(15,max), density=True)])
         
     return histos
     
