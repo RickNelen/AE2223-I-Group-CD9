@@ -156,7 +156,7 @@ def datetosec(year,month,day):
 
 
 #Author: Till (using Mishas code)
-def hiscalc(data, ATA, Type, Time, max):
+def hiscalc(data):
                                 # data is the dataset according to the standard pickle format we use
                                 # ATA is the ATA number to be used in list form [1,2,3]
                                 # Type is the type to be used in list form [1,2,3]
@@ -173,36 +173,12 @@ def hiscalc(data, ATA, Type, Time, max):
                                 #  --> the absolute number of occurences
 
     import numpy as np
-    
-    b = data
-    
-    xx = ATA
-    yy = Type
-    tt = Time
-    
+ 
     histos = []
     
-    for i in range(len(xx)):
+    for i in range(len(data)):
         
-        x = xx[i]
-        y = yy[i]
-        t = tt[i]
-        
-        data = b
-        
-        if x != 0:
-            data = getbyATA(data,str(x))
-            
-        if y != 0:
-            data = getbyType(data,int(y))
-            
-        if t != [0,0]:
-            data = getbyDate(data,t)
-    
-    
-        array = []
-        for i in range(len(data)):
-            array.append(data[i][3])
+        array = data
             
         histos.append([np.array(array),np.histogram(array, bins='auto', range=(15,max), density=True)])
         
