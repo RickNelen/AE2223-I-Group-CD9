@@ -52,6 +52,7 @@ while l <= 28:                                      #overall loop for years
             cancel = t[i][4]  
     #--------------------------------------------------------------------------
     freqlist = sorted(freqlist,key=lambda x: x[s] ,reverse=True)
+    freqlist = freqlist[:10]
     final.append(freqlist)                          #need to accoutn for the first new
     l += 1
     t = []
