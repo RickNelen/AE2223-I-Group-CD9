@@ -155,22 +155,9 @@ def datetosec(year,month,day):
     return timestamp
 
 
-#Author: Till (using Mishas code)
+#Author: Till
 def hiscalc(data):
-                                # data is the dataset according to the standard pickle format we use
-                                # ATA is the ATA number to be used in list form [1,2,3]
-                                # Type is the type to be used in list form [1,2,3]
-                                # Time is a list within a list [[1990,1995],[2010,2015]]
-                                # Make sure that all the lists given have the same length
-                                # If only one graph is wanted enter that data between square brackets [number]
-                                # If certain filtering is not needed then type 0 in square brackets [0] use [0,0] for time
-                                # Max is the maximum value in the histogram bins
-
-                                # Outputs a list of len(ATA) elements with the histogram for the delay time
-                                # This histogram consists of three np arrays:
-                                #  --> the raw delay data for the specific ATA, type and year range
-                                #  --> the boundaries of each bin
-                                #  --> the absolute number of occurences
+    # not using this anymore... histogram generation is now done on-site in the Variance.py
 
     import numpy as np
  
@@ -180,7 +167,9 @@ def hiscalc(data):
         
         array = np.matrix(data[i])
         
-        histos.append([array, np.matrix(np.histogram(array, bins='fd', range=(15,array.max()), density=True)) ])
+        print(np.matrix(data[i]))
+        
+        histos.append([array, np.matrix(np.histogram(array, bins='fd', range=(1,array.max()), density=True)) ])
         
     return histos
     

@@ -184,7 +184,7 @@ def model(beta, x):
 
 
 
-def lstsquares(model, n, beta, data, h=1e-4):
+def lstsquares(model, n, beta, data, h=1e-4): # obsolete, cause I am now using a built-in
     
     ## load modules
     import numpy as np
@@ -202,7 +202,8 @@ def lstsquares(model, n, beta, data, h=1e-4):
     
     
     ## Computations
-    def r(beta,x,y): return y - model(beta,x); # parametric error function, y and x must be same length vectors. beta is vector too, of course
+    def r(beta,x,y):
+        return y - model(beta,x); # parametric error function, y and x must be same length vectors. beta is vector too, of course
         
     def jacobian(fun,x,beta,h):
         # computes the jacobian for the Newton Gau? Method
@@ -230,8 +231,7 @@ def lstsquares(model, n, beta, data, h=1e-4):
         
         # main loop, here the Newton Gauss is facilitated
         J = jacobian(r,datax,beta,h) # O(length(datax)*length(beta))
-        print J
-        betanew = beta - np.matmul(la.pinv(J),r(beta,datax,datay)) # O(2n*m+m^3+n^2*m) pseudoinverse, like in Least Square in LinAlg
+        betanew = beta - np.array(np.matrix(la.pinv(J)) * np.matrix(r(beta,datax,datay))) # O(2n*m+m^3+n^2*m) pseudoinverse, like in Least Square in LinAlg
         itern += 1
         
         #print betanew, beta
@@ -251,7 +251,7 @@ def lstsquares(model, n, beta, data, h=1e-4):
     
     modely = model(beta,data[:,0])
     
-    Xsquare = sum((datay - modely)**2/modely)
+    Xsquare = sum(np.array((datay - modely))**2/np.array(modely))
     
     probnull = stats.chi2.cdf(Xsquare,len(datax)-1) # how likely is obtained X square value if all is independant (ie null hypothesis)
     pval = 1-probnull
@@ -264,72 +264,74 @@ def lstsquares(model, n, beta, data, h=1e-4):
 
 
 
-def fitweibull(histos):
-    # takes a list of NORMALIZED histograms (integral 0 to inf = 1) in the format
-    # defined in lib.core.hiscalc and outputs a list of the same length with:
-    #    --> the best weibull fits (2 parameter np arrays)
-    #    --> the means
-    #    --> the variances
-    #    --> the p-val of the fit (THIS IS STILL UNRELIABLE)
-    #    --> the number of iterations to reach the fit
-    #
-    # Example: histograms = core.hiscalc(b,[32,31],[2,1],[[2000,2003],[2000,2003]],300); print fitweibull(histograms)
+def fitweibull(histo):
+    # takes _one_ normalized histogram from np.histogram and fits a weibull to it using init guess k=1.5, lambda = 20.
+    # now uses scipy builtin function for the fitting
     
     import numpy as np
     import scipy.special as sp # import the special functions for gamma
     import matplotlib.pyplot as plt
+    from scipy.optimize import curve_fit
     
     # model function: weibull
-    def weibull(beta, x):
-        return beta[0]/beta[1] * np.power((x/beta[1]),(beta[0]-1)) * np.exp(-1* np.power((x/beta[1]),beta[0]))
+    #def weibull(beta, x):
+     #   return beta[0]/beta[1] * np.multiply(np.power((np.array(x)/beta[1]),(beta[0]-1)), np.exp(-1* np.power((np.array(x)/beta[1]),beta[0])))
+    
+    def weibull(x, k, lamb): # parametric model for the scipi implementation of lstsquares
+        return k/lamb * (x/lamb)**(k-1) * np.exp(-(x/lamb)**k)
+    
     
     fitbeta = []
     mean    = []
     var     = []
-    pval    = []
-    iternum = []
+#    pval    = []
+#    iternum = []
     
     i = 0
-    for histo in histos:
-        # idea for faster runtime/better convergence --> make weibull initial
-        # guess beta[1] = index of max of histo instead of constant [1,20]
-        (fb, p, it) = lstsquares(weibull, 2, np.transpose([np.array([1,20])]), np.concatenate( histo[1][1][0:-1], histo[1][0] , axis=1  ) )
-            
-        if not fb[1]:
-            
-            fitbeta.append(np.array([0,0]))
-            mean.append(0)
-            var.append(0)
-            pval.append(0)
-            iternum.append(0)
-            
-        else:
-            # calculate mean
-            m = fb[1]*sp.gamma(1+1/fb[0]) # wikipedia: weibull distribution
+    # idea for faster runtime/better convergence --> make weibull initial
+    # guess beta[1] = index of max of histo instead of constant [1,20]
+    #(fb, p, it) = lstsquares(weibull, 2, np.transpose([np.array([1.,20.])]), np.concatenate((np.matrix(histo[1][1][1:]).T, np.matrix(histo[1][0]).T), axis = 1) )
+   
+    try:
+        fb, cov = curve_fit(weibull, histo[1][1][1:], histo[1][0], [1.5, 20.]) # I ditched my own implementation and used this one
+    except RuntimeError:
+        fb = np.array([0,0])
+    except ValueError:
+        fb = np.array([0,0])
+    
+    if not fb[0]: # if fitting failed:
         
-            # calculate variance in the weibull fit data
-            v = fb[1]**2 * ( sp.gamma(1+2./fb[0]) - sp.gamma(1+1./fb[0])**2 ) # wikipedia: Weibull distribution
-            
-            print "test"
-            
-            fitbeta.append(fb)
-            mean.append(m)
-            var.append(v)
-            pval.append(p)
-            iternum.append(it)
+        fitbeta.append(np.array([0,0]))
+        mean.append(0)
+        var.append(0)
+#        pval.append(0)
+#        iternum.append(0)
         
-            xplot = np.arange(1,600,1)
-            yfit = weibull (fb, xplot)
-            
-            plt.close()
-            plt.plot(xplot,yfit)
-            plt.plot( histo[1][1][0:-1].T, [histo[1][0]].T )
-            plt.show()
+    else:
+        # calculate mean
+        m = fb[1]*sp.gamma(1+1/fb[0]) # wikipedia: weibull distribution
+    
+        # calculate variance in the weibull fit data
+        v = fb[1]**2 * ( sp.gamma(1+2./fb[0]) - sp.gamma(1+1./fb[0])**2 ) # wikipedia: Weibull distribution
+        
+        
+        fitbeta.append(fb)
+        mean.append(m)
+        var.append(v)
+    
+        #optional plotting
+#        xplot = np.arange(0,200,1)
+#        yfit = weibull(xplot,fb[0], fb[1])
+#        
+#        plt.close()
+#        plt.plot(xplot,yfit)
+#        plt.plot( histo[1][1][1:], histo[1][0] )
+#        plt.show()
         
         i += 1
         
     
-    return (fitbeta, mean, var, pval, iternum)
+    return (fitbeta, mean, var)
     
     
     
