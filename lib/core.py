@@ -178,24 +178,21 @@ def hiscalc(data):
     
     for i in range(len(data)):
         
-        array = data
-            
-        histos.append([np.array(array),np.histogram(array, bins='auto', range=(15,max), density=True)])
+        array = np.matrix(data[i])
+        
+        histos.append([array, np.matrix(np.histogram(array, bins='fd', range=(15,array.max()), density=True)) ])
         
     return histos
     
 
 
 #Author: Misha
-def hisplot(histos, ATA, Type, Time): # only the histos argument is actually used for computations, the rest is only for printing that info
+def hisplot(histos): # only the histos argument is actually used for computations, the rest is only for printing that info
                          # histos is the output of the hiscalc function
                          # ATA is the ATA number to be used in list form [1,2,3]
                          # Type is the type to be used in list form [1,2,3]
                          # Time is a list within a list [[1990,1995],[2010,2015]]
-                         
-    xx = ATA
-    yy = Type
-    tt = Time
+
     
     import matplotlib.pyplot as plt
     
@@ -214,14 +211,14 @@ def hisplot(histos, ATA, Type, Time): # only the histos argument is actually use
     else:
         """
     fig = plt.figure(num=1, figsize=(18, 12), dpi=80)
-    nu = len(xx)
     ar = [[1,2],[2,2],[2,3],[3,3],[3,4]]
     ara = [2,4,6,9,12]
     e = 0
+    nu = len(histos)
     while nu > ara[e]:
             e +=1
     
-    for i in range(len(xx)):
+    for i in range(nu):
         """
         k[i].sort()
         if le <= max:
@@ -237,7 +234,7 @@ def hisplot(histos, ATA, Type, Time): # only the histos argument is actually use
         median = rawdelay[int(le/2)]
         ax = fig.add_subplot(ar[e][0],ar[e][1],i+1)
         ax.bar(histos[i][1][1][:-1],histos[i][1][0],width=histos[i][1][1][1]-histos[i][1][1][0])
-        string = str(str(xx[i])+"-"+str(yy[i])+", "+str(tt[i])+" A: "+str(mean)+" M: "+str(median))
+        string = str(" A: "+str(mean)+" M: "+str(median))
         ax.set_title(string)
             
         plt.tight_layout()

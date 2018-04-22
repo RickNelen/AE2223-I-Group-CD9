@@ -5,10 +5,10 @@ Created on Thu Mar 22 15:45:03 2018
 @author: Laurens
 """
 
-import core as core
+import lib.core as core
 
 
-k = core.unpickle("../Data.txt")
+k = core.unpickle("./Data.txt")
 k = core.sortata(k,4)
 
 delaylist = []
@@ -22,7 +22,7 @@ delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
 
 #Ouput [ata,delaytime]
 
-while l <= 28:                                      #overall loop for years
+while l <= 27:                                      #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
     aa = core.datetosec((1988+l),1,1)
     ab = core.datetosec((1989+l),1,1)
     #---------------------------------------------------------------------
