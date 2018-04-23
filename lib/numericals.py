@@ -264,7 +264,7 @@ def lstsquares(model, n, beta, data, h=1e-4): # obsolete, cause I am now using a
 
 
 
-def fitweibull(histo):
+def fitweibull(histo, plot = 0):
     # takes _one_ normalized histogram from np.histogram and fits a weibull to it using init guess k=1.5, lambda = 20.
     # now uses scipy builtin function for the fitting
     
@@ -320,13 +320,19 @@ def fitweibull(histo):
         var.append(v)
     
         #optional plotting
-#        xplot = np.arange(0,200,1)
-#        yfit = weibull(xplot,fb[0], fb[1])
-#        
-#        plt.close()
-#        plt.plot(xplot,yfit)
-#        plt.plot( histo[1][1][1:], histo[1][0] )
-#        plt.show()
+        if plot:
+            xplot = np.arange(0,400,1)
+            yfit = weibull(xplot,fb[0], fb[1])
+            
+            plt.close()
+            plt.title("ATA Component 324 -- Year 2008 -- Stdev: %.1f min" % np.sqrt(v))
+            plt.xlabel("Delay Time [min]")
+            plt.ylabel("Density")
+            plt.plot(xplot,yfit)
+            plt.plot( histo[1][1][1:], histo[1][0] )
+            plt.xlim([0,400])
+            plt.savefig("ATA324_Fit.eps")
+            plt.show()
         
         i += 1
         

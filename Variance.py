@@ -65,7 +65,10 @@ for yeardata in final_delay:
         #bins = range(delays.min(), delays.max(), binsize) # used for debugging
         hist = [delays, np.histogram(delays, range=[1,delays.max()], bins='fd', density=True)]
     
-        (fitbeta, mean, var) = numericals.fitweibull(hist)
+        if ata == 324 and j == 20:
+            (fitbeta, mean, var) = numericals.fitweibull(hist, 1)
+        else:
+            (fitbeta, mean, var) = numericals.fitweibull(hist, 0)
         
         final_delay[j][k].append(fitbeta)
         final_delay[j][k].append(mean)
