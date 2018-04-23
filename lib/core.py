@@ -155,22 +155,9 @@ def datetosec(year,month,day):
     return timestamp
 
 
-#Author: Till (using Mishas code)
+#Author: Till
 def hiscalc(data):
-                                # data is the dataset according to the standard pickle format we use
-                                # ATA is the ATA number to be used in list form [1,2,3]
-                                # Type is the type to be used in list form [1,2,3]
-                                # Time is a list within a list [[1990,1995],[2010,2015]]
-                                # Make sure that all the lists given have the same length
-                                # If only one graph is wanted enter that data between square brackets [number]
-                                # If certain filtering is not needed then type 0 in square brackets [0] use [0,0] for time
-                                # Max is the maximum value in the histogram bins
-
-                                # Outputs a list of len(ATA) elements with the histogram for the delay time
-                                # This histogram consists of three np arrays:
-                                #  --> the raw delay data for the specific ATA, type and year range
-                                #  --> the boundaries of each bin
-                                #  --> the absolute number of occurences
+    # not using this anymore... histogram generation is now done on-site in the Variance.py
 
     import numpy as np
  
@@ -178,24 +165,23 @@ def hiscalc(data):
     
     for i in range(len(data)):
         
-        array = data
-            
-        histos.append([np.array(array),np.histogram(array, bins='auto', range=(15,max), density=True)])
+        array = np.matrix(data[i])
+        
+        print(np.matrix(data[i]))
+        
+        histos.append([array, np.matrix(np.histogram(array, bins='fd', range=(1,array.max()), density=True)) ])
         
     return histos
     
 
 
 #Author: Misha
-def hisplot(histos, ATA, Type, Time): # only the histos argument is actually used for computations, the rest is only for printing that info
+def hisplot(histos): # only the histos argument is actually used for computations, the rest is only for printing that info
                          # histos is the output of the hiscalc function
                          # ATA is the ATA number to be used in list form [1,2,3]
                          # Type is the type to be used in list form [1,2,3]
                          # Time is a list within a list [[1990,1995],[2010,2015]]
-                         
-    xx = ATA
-    yy = Type
-    tt = Time
+
     
     import matplotlib.pyplot as plt
     
@@ -214,14 +200,14 @@ def hisplot(histos, ATA, Type, Time): # only the histos argument is actually use
     else:
         """
     fig = plt.figure(num=1, figsize=(18, 12), dpi=80)
-    nu = len(xx)
     ar = [[1,2],[2,2],[2,3],[3,3],[3,4]]
     ara = [2,4,6,9,12]
     e = 0
+    nu = len(histos)
     while nu > ara[e]:
             e +=1
     
-    for i in range(len(xx)):
+    for i in range(nu):
         """
         k[i].sort()
         if le <= max:
@@ -237,7 +223,7 @@ def hisplot(histos, ATA, Type, Time): # only the histos argument is actually use
         median = rawdelay[int(le/2)]
         ax = fig.add_subplot(ar[e][0],ar[e][1],i+1)
         ax.bar(histos[i][1][1][:-1],histos[i][1][0],width=histos[i][1][1][1]-histos[i][1][1][0])
-        string = str(str(xx[i])+"-"+str(yy[i])+", "+str(tt[i])+" A: "+str(mean)+" M: "+str(median))
+        string = str(" A: "+str(mean)+" M: "+str(median))
         ax.set_title(string)
             
         plt.tight_layout()

@@ -5,11 +5,11 @@ Created on Thu Mar 22 14:15:10 2018
 @author: Laurens
 """
 
-import core as core
+import lib.core as core
 
 
-k = core.unpickle("../Data.txt")
-k = core.sortata(k,4)
+k = core.unpickle("./Data.txt")
+k = core.sortata(k,3)
 
 
 freqlist = []                                       #frequency per time frame
@@ -26,7 +26,7 @@ s=1
 #              3 = Ratio cancellations over frequency""")
 
 
-while l <= 28:                                      #overall loop for years
+while l <= 27:                                      #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
     aa = core.datetosec((1988+l),1,1)
     ab = core.datetosec((1989+l),1,1)
     #---------------------------------------------------------------------
@@ -66,3 +66,13 @@ for y in range (len(final)):
 uniqueata = set(uniqueata)
 uniqueata = list(uniqueata)
 print 'amount of unique ATA-numbers:', len(uniqueata)
+
+
+# export as csv
+import csv
+
+with open("FreqTop10.csv", 'wb') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(final)
+
+
