@@ -49,6 +49,18 @@ for l in range(0, 28):                              #overall loop for years. Til
 
 
     
+newl = []
+intl = []
+for w in range(len(final)):
+    for k in range(10):
+        intl.append(final[w][k][0])
+        intl.append(k+1)
+        intl.append(w+1988)
+        newl.append(intl)
+        intl = []
+        
+        
+    
 #FINDING HOW MANY UNIQUE ATA NUMBERS IN FINAL PER TOP 10
 # =============================================================================
 uniqueata = []
