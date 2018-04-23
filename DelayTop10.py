@@ -15,14 +15,11 @@ delaylist = []
 i=0
 h = []
 t = []
-l = 0
 final = []
-        
-delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
+typelist = []
+typ = 1
 
-#Ouput [ata,delaytime]
-
-while l <= 27:                                      #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+for l in range(0, 28):                              #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
     aa = core.datetosec((1988+l),1,1)
     ab = core.datetosec((1989+l),1,1)
     #---------------------------------------------------------------------
@@ -47,9 +44,10 @@ while l <= 27:                                      #overall loop for years. Til
     delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
     delaylist = delaylist[:10]
     final.append(delaylist)                          
-    l += 1
     t = []
     delaylist = []
+
+
     
 #FINDING HOW MANY UNIQUE ATA NUMBERS IN FINAL PER TOP 10
 # =============================================================================
@@ -61,6 +59,7 @@ uniqueata = set(uniqueata)
 uniqueata = list(uniqueata)
 print 'amount of unique ATA-numbers:', len(uniqueata)
 # =============================================================================
+
 
 
 # export as csv
@@ -107,10 +106,5 @@ print 'amount of unique ATA-numbers:', len(uniqueata)
 #            exportline.append(int(item))
 #        wr.writerow(exportline)
 #    
-    
-    
-    
-    
-    
-    
-    
+
+#Ouput [year[ata,delaytime]]
