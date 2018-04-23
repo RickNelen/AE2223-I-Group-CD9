@@ -34,7 +34,7 @@ def getbyATA (data, ata):
     
 #Author: Till   
 def getbyType (data, actype):
-    #l lines in a data list that are concerning one specific aircraft type
+    # gets all lines in a data list that are concerning one specific aircraft type
     # I/Os
 
     # inputs:
@@ -148,23 +148,33 @@ def datetosec(year,month,day):
     
     return timestamp
 
-#Author: Misha
-def hisplot(ATA,Type,Time,max): #ATA is the ATA number to be used in list form [1,2,3]
-                                #Type is the type to be used in list form [1,2,3]
-                                #Time is a list within a list [[1990,1995],[2010,2015]]
-                                #Make sure that all the lists given have the same length
-                                #If only one graph is wanted enter that data between square brackets [number]
-                                #If certain filtering is not needed then type 0 in square brackets [0] use [0,0] for time
-                                #Max is the maximum value displayed on the x axis 
+
+#Author: Till (using Mishas code)
+def hiscalc(data, ATA, Type, Time, max):
+                                # data is the dataset according to the standard pickle format we use
+                                # ATA is the ATA number to be used in list form [1,2,3]
+                                # Type is the type to be used in list form [1,2,3]
+                                # Time is a list within a list [[1990,1995],[2010,2015]]
+                                # Make sure that all the lists given have the same length
+                                # If only one graph is wanted enter that data between square brackets [number]
+                                # If certain filtering is not needed then type 0 in square brackets [0] use [0,0] for time
+                                # Max is the maximum value in the histogram bins
+
+                                # Outputs a list of len(ATA) elements with the histogram for the delay time
+                                # This histogram consists of three np arrays:
+                                #  --> the raw delay data for the specific ATA, type and year range
+                                #  --> the boundaries of each bin
+                                #  --> the absolute number of occurences
+
+    import numpy as np
     
-    import matplotlib.pyplot as plt
-    
-    b = unpickle("./Data.txt")
+    b = data
     
     xx = ATA
-    tt = Time
     yy = Type
-    k = []
+    tt = Time
+    
+    histos = []
     
     for i in range(len(xx)):
         
@@ -176,61 +186,77 @@ def hisplot(ATA,Type,Time,max): #ATA is the ATA number to be used in list form [
         
         if x != 0:
             data = getbyATA(data,int(x))
+            
         if y != 0:
             data = getbyType(data,int(y))
+            
         if t != [0,0]:
             data = getbyDate(data,t)
     
+    
         array = []
-        
         for i in range(len(data)):
             array.append(data[i][3])
+            
+        histos.append([np.array(array),np.histogram(array, bins='auto', range=(1,max), density=True)])
         
-        k.append(array)
-        
+    return histos
+    
+
+
+#Author: Misha
+def hisplot(histos, ATA, Type, Time):
+                         # histos is the output of the hiscalc function
+                         # ATA is the ATA number to be used in list form [1,2,3]
+                         # Type is the type to be used in list form [1,2,3]
+                         # Time is a list within a list [[1990,1995],[2010,2015]]
+                         
+    xx = ATA
+    yy = Type
+    tt = Time
+    
+    import matplotlib.pyplot as plt
+    
     plt.close(1)
     
-    if len(xx) == 1:
-            array = k[0]
-            array.sort()
-            le = len(array)
-            if le <= max:
-                True
-            else:
-                t = 0
-                while array[t] <= max:
-                    t += 1
-            mean = sum(array)/le
-            median = array[int(le/2)]
-            string =  str(str(xx[0])+"-"+str(yy[0])+", "+str(tt[0])+" A: "+str(mean)+" M: "+str(median))
-            plt.hist(array, bins=x,range=(1,max))
-            plt.title(string)
-            plt.show()
+    """ obsolete now, the other stuff secretly also works for just one data set
+    if len(histos) == 1:
+        le = len(histos[1])
+        mean = sum(array)/le
+        median = array[int(le/2)]
+        string =  str(str(xx[0])+"-"+str(yy[0])+", "+str(tt[0])+" A: "+str(mean)+" M: "+str(median))
+        plt.hist(array, bins=x,range=(1,max))
+        plt.title(string)
+        plt.show()
     
     else:
-        fig = plt.figure(num=1, figsize=(18, 12), dpi=80)
-        nu = len(xx)
-        ar = [[1,2],[2,2],[2,3],[3,3],[3,4]]
-        ara = [2,4,6,9,12]
-        e = 0
-        while nu > ara[e]:
-                e +=1
-        
-        for i in range(len(xx)):
-            k[i].sort()
-            le = len(k[i])
-            if le <= max:
-                True
-            else:
-                t = 0
-                while k[i][t] <= max:
-                    t += 1
-            mean = sum(k[i])/le
-            median = k[i][int(le/2)]
-            ax = fig.add_subplot(ar[e][0],ar[e][1],i+1)
-            ax.hist(k[i], bins="auto",range=(1,max))
-            string = str(str(xx[i])+"-"+str(yy[i])+", "+str(tt[i])+" A: "+str(mean)+" M: "+str(median))
-            ax.set_title(string)
+        """
+    fig = plt.figure(num=1, figsize=(18, 12), dpi=80)
+    nu = len(xx)
+    ar = [[1,2],[2,2],[2,3],[3,3],[3,4]]
+    ara = [2,4,6,9,12]
+    e = 0
+    while nu > ara[e]:
+            e +=1
+    
+    for i in range(len(xx)):
+        """
+        k[i].sort()
+        if le <= max:
+            True
+        else:
+            t = 0
+            while k[i][t] <= max:
+                t += 1
+        """
+        rawdelay = histos[i][0]
+        le = len(rawdelay)
+        mean = sum(rawdelay)/le
+        median = rawdelay[int(le/2)]
+        ax = fig.add_subplot(ar[e][0],ar[e][1],i+1)
+        ax.bar(histos[i][1][1][:-1],histos[i][1][0],width=histos[i][1][1][1]-histos[i][1][1][0])
+        string = str(str(xx[i])+"-"+str(yy[i])+", "+str(tt[i])+" A: "+str(mean)+" M: "+str(median))
+        ax.set_title(string)
             
         plt.tight_layout()
         plt.show()
@@ -257,7 +283,7 @@ def getbyDate(data,yearrange):  #data is the usual data set
     return filtered
         
 #Author: Misha 
-def findunique(data,serial_ata,digits):    #Data is in the usual format
+def findunique(data,serial_ata):    #Data is in the usual format
                                     #Serial_ata is 1 or 0, o for serial num and 1 for ata
                                     #Returns a list of all unique values
     
@@ -267,11 +293,9 @@ def findunique(data,serial_ata,digits):    #Data is in the usual format
         for i in range(len(data)):
             flat.append(data[i][0])
             
-    j = 5+digits
-    
     if serial_ata == 1:
         for i in range(len(data)):
-            data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])]
+            data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:11])]
             data[i][5] = int(data[i][5])
         for i in range(len(data)):
             flat.append(data[i][5])
@@ -282,18 +306,7 @@ def findunique(data,serial_ata,digits):    #Data is in the usual format
     ul.sort()
     
     return ul
- 
-#Author: Misha      
-def sortata(data,digits):
-
-    j = 5+digits
     
-    for i in range(len(data)):
-        data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])]
-        data[i][5] = int(data[i][5])
-       
-    data.sort(key=lambda x: x[5])
     
-    return data
     
     
