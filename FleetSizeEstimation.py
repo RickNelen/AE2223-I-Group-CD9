@@ -39,7 +39,8 @@ for actype in actypes:
         curtype.append(len(acdatabase[str(year)][str(actype)]))
     typenums.append(curtype)
 
-plt.plot(years,typenums[0])
-plt.plot(years,typenums[1])
-plt.plot(years,typenums[2])
-plt.show()
+plt.plot(years,typenums[0], label='Type 1')
+plt.plot(years,typenums[1], label='Type 2')
+plt.plot(years,typenums[2], label='Type 3')
+plt.legend()
+plt.savefig("fleetsize.eps")

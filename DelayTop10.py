@@ -9,7 +9,7 @@ import lib.core as core
 
 
 k = core.unpickle("./Data.txt")
-k = core.sortata(k,4)
+k = core.sortata(k,3)
 
 delaylist = []
 i=0
@@ -61,3 +61,56 @@ uniqueata = set(uniqueata)
 uniqueata = list(uniqueata)
 print 'amount of unique ATA-numbers:', len(uniqueata)
 # =============================================================================
+
+
+# export as csv
+#import csv
+#import numpy as np
+#
+#with open("DelayTop10.csv", 'wb') as myfile:
+#    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+#    actualmatrix = []
+#    for line in final:
+#        actualline= []
+#        for item in line:
+#            actualline.append( item[0])
+#        actualmatrix.append(actualline)
+#    actualmatrix = np.matrix(actualmatrix)
+#    actualmatrix = actualmatrix.T # taking transpose so that the every year is a new column instead of a new row
+#    for line in actualmatrix:
+#        exportline = []
+#        for item in line.T:
+#            exportline.append(int(item))
+#        wr.writerow(exportline)
+#
+#
+#finalnp = np.array(final)
+#
+#ranking = []
+#for ata in uniqueata:
+#    ataline = []
+#    ataline.append(ata)
+#    for year in range(28):
+#        if ata in finalnp[year,:,0]:
+#            ataline.append(np.where(finalnp[year,:,0] == ata)[0][0] + 1)
+#        else:
+#            ataline.append(11)
+#    ranking.append(ataline)
+#
+#ranking = np.matrix(ranking).T
+#
+#with open("DelayTop10Ranks.csv", 'wb') as myfile:
+#    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+#    for line in ranking:
+#        exportline = []
+#        for item in line.T:
+#            exportline.append(int(item))
+#        wr.writerow(exportline)
+#    
+    
+    
+    
+    
+    
+    
+    

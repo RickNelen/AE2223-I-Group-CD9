@@ -9,7 +9,7 @@ import lib.core as core
 
 
 k = core.unpickle("./Data.txt")
-k = core.sortata(k,4)
+k = core.sortata(k,3)
 
 
 freqlist = []                                       #frequency per time frame
@@ -66,3 +66,13 @@ for y in range (len(final)):
 uniqueata = set(uniqueata)
 uniqueata = list(uniqueata)
 print 'amount of unique ATA-numbers:', len(uniqueata)
+
+
+# export as csv
+import csv
+
+with open("FreqTop10.csv", 'wb') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(final)
+
+
