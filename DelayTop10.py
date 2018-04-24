@@ -54,15 +54,7 @@ for l in range(0, 28):                              #overall loop for years. Til
 
 
     
-newl = []
-intl = []
-for w in range(len(final)):
-    for k in range(10):
-        intl.append(final[w][k][0])
-        intl.append(k+1)
-        intl.append(w*3+1988)
-        newl.append(intl)
-        intl = []
+
 
         
         
@@ -80,10 +72,21 @@ print 'amount of unique ATA-numbers:', len(uniqueata)
 
 
 
+
 # export as csv
 import csv
 #import numpy as np
 
+newl = []
+intl = []
+for w in range(len(final)):
+    for k in range(10):
+        intl.append(final[w][k][0])
+        intl.append(k+1)
+        intl.append(w*3+1988)
+        newl.append(intl)
+        intl = []
+        
 with open("DelayTop10_tableaulist.csv", 'wb') as myfile:
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
     for row in newl:
