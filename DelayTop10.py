@@ -6,55 +6,57 @@ Created on Thu Mar 22 15:45:03 2018
 """
 
 import lib.core as core
+import numpy as np
 
 
-k = core.unpickle("./Data.txt")
-#k = core.getbyType(k, 2)
-k = core.sortata(k,3)
+def getdelaylist(atalevel, typ = 0, timeframe = [1988,2015], interval = 36):
 
-delaylist = []
-i=0
-h = []
-t = []
-final = []
-typelist = []
-typ = 1
-
-for l in range(0, 28):                              #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
-    aa = core.datetosec((1988+l),1,1)
-    ab = core.datetosec((1991+l),1,1)
-    #---------------------------------------------------------------------
-    for j in range(1,len(k)):                       #loop for filtering per year 
-        if aa <= k[j][2] < ab:
-            t.append(k[j])
-    c=t[0][3]                                       #need to account for the first line
-    #----------------------------------------------------------------------
-    for i in range(1,len(t)):
+    k = core.unpickle("./Data.txt")
+    if typ:
+        k = core.getbyType(k, typ)
+        
+    k = core.sortata(k, atalevel)
     
-        if t[i][5] == t[i-1][5]:                    #as long as the ata number is the same as the one befor
-            c += t[i][3]                            #adding delaytime
-            h.append(t[i][3])                       #statistical stuff
-        if t[i][5] != t[i-1][5]:                    #if a new atanumber is reached
-            j = []                                  #need list to create matrix
-            j.append(t[i-1][5])
-            j.append(c)
-            delaylist.append(j)                     #add [ata,delay]
-            c = t[i][3]                             #reset delay to zero for next ata
-            h = []  
-    #--------------------------------------------------------------------------
-    delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
-    delaylist = delaylist[:10]
-    final.append(delaylist)                          
-<<<<<<< Updated upstream
-=======
-    l += 3
->>>>>>> Stashed changes
-    t = []
     delaylist = []
+    i = 0
+    h = []
+    t = []
+    final = []
+    
+    for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+        aa = core.datetosec(int(np.floor(l/12)),int(l%12)+1,1)
+        ab = core.datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31)
 
+        #---------------------------------------------------------------------
+        for j in range(1,len(k)):                       #loop for filtering per year 
+            if aa <= k[j][2] < ab:
+                t.append(k[j])
+        c=t[0][3]                                       #need to account for the first line
+        #----------------------------------------------------------------------
+        for i in range(1,len(t)):
+        
+            if t[i][5] == t[i-1][5]:                    #as long as the ata number is the same as the one befor
+                c += t[i][3]                            #adding delaytime
+                h.append(t[i][3])                       #statistical stuff
+            if t[i][5] != t[i-1][5]:                    #if a new atanumber is reached
+                j = []                                  #need list to create matrix
+                j.append(t[i-1][5])
+                j.append(c)
+                delaylist.append(j)                     #add [ata,delay]
+                c = t[i][3]                             #reset delay to zero for next ata
+                h = []  
+        #--------------------------------------------------------------------------
+        delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
+        delaylist = delaylist[:10]
+        final.append(delaylist)
+        t = []
+        delaylist = []
+        
+        
+    return final, interval
 
     
-
+final, interval = getdelaylist(2)
 
         
         
