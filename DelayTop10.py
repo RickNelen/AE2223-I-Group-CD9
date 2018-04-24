@@ -7,6 +7,7 @@ Created on Thu Mar 22 15:45:03 2018
 
 import lib.core as core
 import numpy as np
+import datetime
 
 
 def getdelaylist(atalevel, typ = 0, timeframe = [1988,2015], interval = 36):
@@ -22,11 +23,13 @@ def getdelaylist(atalevel, typ = 0, timeframe = [1988,2015], interval = 36):
     h = []
     t = []
     final = []
+    datelist = []
     
     for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
         aa = core.datetosec(int(np.floor(l/12)),int(l%12)+1,1)
         ab = core.datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31)
-
+        datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y'))
+        
         #---------------------------------------------------------------------
         for j in range(1,len(k)):                       #loop for filtering per year 
             if aa <= k[j][2] < ab:
@@ -53,23 +56,23 @@ def getdelaylist(atalevel, typ = 0, timeframe = [1988,2015], interval = 36):
         delaylist = []
         
         
-    return final, interval
+    return final, datelist
 
     
-final, interval = getdelaylist(2)
+
 
         
         
     
 #FINDING HOW MANY UNIQUE ATA NUMBERS IN FINAL PER TOP 10
 # =============================================================================
-uniqueata = []
-for y in range (len(final)):
-    for l in range (10):
-        uniqueata.append(final[y][l][0])
-uniqueata = set(uniqueata)
-uniqueata = list(uniqueata)
-print 'amount of unique ATA-numbers:', len(uniqueata)
+#uniqueata = []
+#for y in range (len(final)):
+#    for l in range (10):
+#        uniqueata.append(final[y][l][0])
+#uniqueata = set(uniqueata)
+#uniqueata = list(uniqueata)
+#print 'amount of unique ATA-numbers:', len(uniqueata)
 # =============================================================================
 
 
@@ -79,20 +82,35 @@ print 'amount of unique ATA-numbers:', len(uniqueata)
 import csv
 #import numpy as np
 
-newl = []
-intl = []
-for w in range(len(final)):
-    for k in range(10):
-        intl.append(final[w][k][0])
-        intl.append(k+1)
-        intl.append(w*3+1988)
-        newl.append(intl)
-        intl = []
-        
-with open("DelayTop10_tableaulist.csv", 'wb') as myfile:
-    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    for row in newl:
-        wr.writerow(row)
+
+
+for atalevel in range(2,5):
+    for beginyear in [1988, 2011, 2014]:
+        for actype in range(1,4):
+                for interval in [3,6,12,36]:
+                    
+                    newl = []
+                    intl = []
+                    if actype == 3 and beginyear < 1995:
+                        beginyear = 1995
+                    if (beginyear == 1988 or (actype == 3 and beginyear == 1995)) and interval <= 6:
+                        continue
+                    final, datelist = getdelaylist(atalevel, actype, [beginyear,2015], interval)
+                    
+                    for w in range(len(final)):
+                        for k in range(10):
+                            print w, k
+                            intl.append(final[w][k][0])
+                            intl.append(k+1)
+                            intl.append(datelist[w])
+                            newl.append(intl)
+                            intl = []
+                            
+                    with open("DelayTop10_ata%d_ac%d_%d-2015_interv%d.csv" % (atalevel, actype, beginyear, interval), 'wb') as myfile:
+                        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+                        wr.writerow(['ATA', 'Rank', 'Year'])
+                        for row in newl:
+                            wr.writerow(row)
 
 #
 #with open("DelayTop10.csv", 'wb') as myfile:
