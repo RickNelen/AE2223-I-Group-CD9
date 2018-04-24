@@ -9,22 +9,20 @@ import lib.core as core
 
 
 k = core.unpickle("./Data.txt")
+#k = core.getbyType(k, 2)
 k = core.sortata(k,3)
 
 delaylist = []
 i=0
 h = []
 t = []
-l = 0
 final = []
-        
-delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
+typelist = []
+typ = 1
 
-#Ouput [ata,delaytime]
-
-while l <= 27:                                      #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+for l in range(0, 28):                              #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
     aa = core.datetosec((1988+l),1,1)
-    ab = core.datetosec((1989+l),1,1)
+    ab = core.datetosec((1991+l),1,1)
     #---------------------------------------------------------------------
     for j in range(1,len(k)):                       #loop for filtering per year 
         if aa <= k[j][2] < ab:
@@ -47,9 +45,19 @@ while l <= 27:                                      #overall loop for years. Til
     delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
     delaylist = delaylist[:10]
     final.append(delaylist)                          
-    l += 1
+<<<<<<< Updated upstream
+=======
+    l += 3
+>>>>>>> Stashed changes
     t = []
     delaylist = []
+
+
+    
+
+
+        
+        
     
 #FINDING HOW MANY UNIQUE ATA NUMBERS IN FINAL PER TOP 10
 # =============================================================================
@@ -63,9 +71,27 @@ print 'amount of unique ATA-numbers:', len(uniqueata)
 # =============================================================================
 
 
+
+
 # export as csv
-#import csv
+import csv
 #import numpy as np
+
+newl = []
+intl = []
+for w in range(len(final)):
+    for k in range(10):
+        intl.append(final[w][k][0])
+        intl.append(k+1)
+        intl.append(w*3+1988)
+        newl.append(intl)
+        intl = []
+        
+with open("DelayTop10_tableaulist.csv", 'wb') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    for row in newl:
+        wr.writerow(row)
+
 #
 #with open("DelayTop10.csv", 'wb') as myfile:
 #    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
@@ -107,10 +133,5 @@ print 'amount of unique ATA-numbers:', len(uniqueata)
 #            exportline.append(int(item))
 #        wr.writerow(exportline)
 #    
-    
-    
-    
-    
-    
-    
-    
+
+#Ouput [year[ata,delaytime]]

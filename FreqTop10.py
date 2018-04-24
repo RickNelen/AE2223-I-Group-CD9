@@ -6,6 +6,9 @@ Created on Thu Mar 22 14:15:10 2018
 """
 
 import lib.core as core
+import core as core
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 k = core.unpickle("./Data.txt")
@@ -25,8 +28,8 @@ s=1
 #              2 = Frequency cancellations 
 #              3 = Ratio cancellations over frequency""")
 
-
-while l <= 27:                                      #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+numyear = 27
+while l <= numyear:                                      #overall loop for years
     aa = core.datetosec((1988+l),1,1)
     ab = core.datetosec((1989+l),1,1)
     #---------------------------------------------------------------------
@@ -57,7 +60,8 @@ while l <= 27:                                      #overall loop for years. Til
     l += 1
     t = []
     freqlist = []
-    
+
+
 #FINDING HOW MANY UNIQUE ATA NUMBERS IN FINAL PER TOP 10
 uniqueata = []
 for y in range (len(final)):
@@ -66,13 +70,4 @@ for y in range (len(final)):
 uniqueata = set(uniqueata)
 uniqueata = list(uniqueata)
 print 'amount of unique ATA-numbers:', len(uniqueata)
-
-
-# export as csv
-import csv
-
-with open("FreqTop10.csv", 'wb') as myfile:
-    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    wr.writerow(final)
-
 
