@@ -9,6 +9,7 @@ import lib.core as core
 
 
 k = core.unpickle("./Data.txt")
+#k = core.getbyType(k, 2)
 k = core.sortata(k,3)
 
 delaylist = []
@@ -21,7 +22,7 @@ typ = 1
 
 for l in range(0, 28):                              #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
     aa = core.datetosec((1988+l),1,1)
-    ab = core.datetosec((1989+l),1,1)
+    ab = core.datetosec((1991+l),1,1)
     #---------------------------------------------------------------------
     for j in range(1,len(k)):                       #loop for filtering per year 
         if aa <= k[j][2] < ab:
@@ -44,6 +45,10 @@ for l in range(0, 28):                              #overall loop for years. Til
     delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
     delaylist = delaylist[:10]
     final.append(delaylist)                          
+<<<<<<< Updated upstream
+=======
+    l += 3
+>>>>>>> Stashed changes
     t = []
     delaylist = []
 
@@ -55,9 +60,10 @@ for w in range(len(final)):
     for k in range(10):
         intl.append(final[w][k][0])
         intl.append(k+1)
-        intl.append(w+1988)
+        intl.append(w*3+1988)
         newl.append(intl)
         intl = []
+
         
         
     
@@ -75,8 +81,14 @@ print 'amount of unique ATA-numbers:', len(uniqueata)
 
 
 # export as csv
-#import csv
+import csv
 #import numpy as np
+
+with open("DelayTop10_tableaulist.csv", 'wb') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    for row in newl:
+        wr.writerow(row)
+
 #
 #with open("DelayTop10.csv", 'wb') as myfile:
 #    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
