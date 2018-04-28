@@ -1,0 +1,348 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 10500.18.0404.1406                               -->
+<workbook source-build='10.5.3 (10500.18.0404.1406)' source-platform='win' version='10.5' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <datasources>
+    <datasource caption='DelayTop10_tableaulist' inline='true' name='federated.0d1tj7q1ni1m3v196ui4w0ecgq36' version='10.5'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='DelayTop10_ata2_ac1_2011-2015_interv3' name='textscan.0mqgenj00wtqqc1779qbz0q6q1a3'>
+            <connection class='textscan' directory='D:/Documents/Studium/AA_Courses/Semester_4/Project/AE2223-I-Group-CD9/Top10csv' filename='DelayTop10_ata2_ac1_2011-2015_interv3.csv' password='' server='' />
+          </named-connection>
+        </named-connections>
+        <relation connection='textscan.0mqgenj00wtqqc1779qbz0q6q1a3' name='DelayTop10_ata2_ac1_2011-2015_interv3.csv' table='[DelayTop10_ata2_ac1_2011-2015_interv3#csv]' type='table'>
+          <columns character-set='UTF-8' header='yes' locale='en_US' separator=','>
+            <column datatype='integer' name='ATA' ordinal='0' />
+            <column datatype='integer' name='Rank' ordinal='1' />
+            <column datatype='date' name='Year' ordinal='2' />
+          </columns>
+        </relation>
+        <metadata-records>
+          <metadata-record class='capability'>
+            <remote-name />
+            <remote-type>0</remote-type>
+            <parent-name>[DelayTop10_ata2_ac1_2011-2015_interv3.csv]</parent-name>
+            <remote-alias />
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='character-set'>&quot;UTF-8&quot;</attribute>
+              <attribute datatype='string' name='collation'>&quot;en_US&quot;</attribute>
+              <attribute datatype='string' name='field-delimiter'>&quot;,&quot;</attribute>
+              <attribute datatype='string' name='header-row'>&quot;true&quot;</attribute>
+              <attribute datatype='string' name='locale'>&quot;en_US&quot;</attribute>
+              <attribute datatype='string' name='single-char'>&quot;&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ATA</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[ATA]</local-name>
+            <parent-name>[DelayTop10_ata2_ac1_2011-2015_interv3.csv]</parent-name>
+            <remote-alias>ATA</remote-alias>
+            <ordinal>0</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Rank</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[Rank]</local-name>
+            <parent-name>[DelayTop10_ata2_ac1_2011-2015_interv3.csv]</parent-name>
+            <remote-alias>Rank</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Year</remote-name>
+            <remote-type>133</remote-type>
+            <local-name>[Year]</local-name>
+            <parent-name>[DelayTop10_ata2_ac1_2011-2015_interv3.csv]</parent-name>
+            <remote-alias>Year</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>date</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column caption='ATA1' datatype='integer' name='[ATA]' role='measure' type='quantitative' />
+      <column caption='Rank2' datatype='integer' name='[Calculation_1288592502989193216]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='RANK_UNIQUE(sum(-[Rank]))'>
+          <table-calc ordering-type='Rows' />
+        </calculation>
+      </column>
+      <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+        <calculation class='tableau' formula='1' />
+      </column>
+      <column caption='Year1' datatype='date' name='[Year]' role='dimension' type='ordinal' />
+      <column-instance column='[ATA]' derivation='None' name='[none:ATA:ok]' pivot='key' type='ordinal' />
+      <layout dim-ordering='alphabetic' dim-percentage='0.486811' measure-ordering='alphabetic' measure-percentage='0.513189' show-structure='true' />
+      <style>
+        <style-rule element='mark'>
+          <encoding attr='color' field='[none:ATA:ok]' type='palette'>
+            <map to='#499894'>
+              <bucket>29</bucket>
+            </map>
+            <map to='#4e79a7'>
+              <bucket>5</bucket>
+            </map>
+            <map to='#4e79a7'>
+              <bucket>75</bucket>
+            </map>
+            <map to='#59a14f'>
+              <bucket>25</bucket>
+            </map>
+            <map to='#59a14f'>
+              <bucket>79</bucket>
+            </map>
+            <map to='#79706e'>
+              <bucket>34</bucket>
+            </map>
+            <map to='#86bcb6'>
+              <bucket>30</bucket>
+            </map>
+            <map to='#8cd17d'>
+              <bucket>26</bucket>
+            </map>
+            <map to='#9d7660'>
+              <bucket>72</bucket>
+            </map>
+            <map to='#a0cbe8'>
+              <bucket>21</bucket>
+            </map>
+            <map to='#a0cbe8'>
+              <bucket>76</bucket>
+            </map>
+            <map to='#b07aa1'>
+              <bucket>61</bucket>
+            </map>
+            <map to='#b6992d'>
+              <bucket>27</bucket>
+            </map>
+            <map to='#bab0ac'>
+              <bucket>35</bucket>
+            </map>
+            <map to='#d37295'>
+              <bucket>52</bucket>
+            </map>
+            <map to='#d4a6c8'>
+              <bucket>71</bucket>
+            </map>
+            <map to='#d7b5a6'>
+              <bucket>73</bucket>
+            </map>
+            <map to='#e15759'>
+              <bucket>32</bucket>
+            </map>
+            <map to='#f1ce63'>
+              <bucket>28</bucket>
+            </map>
+            <map to='#f28e2b'>
+              <bucket>23</bucket>
+            </map>
+            <map to='#f28e2b'>
+              <bucket>77</bucket>
+            </map>
+            <map to='#fabfd2'>
+              <bucket>56</bucket>
+            </map>
+            <map to='#ff9d9a'>
+              <bucket>33</bucket>
+            </map>
+            <map to='#ffbe7d'>
+              <bucket>24</bucket>
+            </map>
+            <map to='#ffbe7d'>
+              <bucket>78</bucket>
+            </map>
+          </encoding>
+        </style-rule>
+      </style>
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;Netherlands&quot;' />
+      </semantic-values>
+      <date-options start-of-week='monday' />
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Sheet 1'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='DelayTop10_tableaulist' name='federated.0d1tj7q1ni1m3v196ui4w0ecgq36' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0d1tj7q1ni1m3v196ui4w0ecgq36'>
+            <column caption='ATA1' datatype='integer' name='[ATA]' role='measure' type='quantitative' />
+            <column caption='Rank2' datatype='integer' name='[Calculation_1288592502989193216]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='RANK_UNIQUE(sum(-[Rank]))'>
+                <table-calc ordering-type='Rows' />
+              </calculation>
+            </column>
+            <column datatype='integer' name='[Rank]' role='measure' type='quantitative' />
+            <column caption='Year1' datatype='date' name='[Year]' role='dimension' type='ordinal' />
+            <column-instance column='[ATA]' derivation='None' name='[none:ATA:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[ATA]' derivation='None' name='[none:ATA:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Rank]' derivation='None' name='[none:Rank:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Year]' derivation='None' name='[none:Year:ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Year]' derivation='None' name='[none:Year:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Rank]' derivation='Sum' name='[sum:Rank:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Calculation_1288592502989193216]' derivation='User' name='[usr:Calculation_1288592502989193216:qk:2]' pivot='key' type='quantitative'>
+              <table-calc ordering-field='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[ATA]' ordering-type='Field' />
+            </column-instance>
+          </datasource-dependencies>
+          <filter class='quantitative' column='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:qk]' included-values='in-range'>
+            <min>5</min>
+            <max>79</max>
+          </filter>
+          <filter class='quantitative' column='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:Rank:qk]' included-values='in-range'>
+            <min>1</min>
+            <max>10</max>
+          </filter>
+          <filter class='quantitative' column='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:Year:qk]' included-values='in-range'>
+            <min>#2011-01-01#</min>
+            <max>#2014-12-29#</max>
+          </filter>
+          <slices>
+            <column>[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:Rank:qk]</column>
+            <column>[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:Year:qk]</column>
+            <column>[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:qk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='axis'>
+            <encoding attr='space' class='1' field='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2]' field-type='quantitative' fold='true' reverse='true' scope='rows' type='space' />
+            <encoding attr='space' class='0' field='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2]' field-type='quantitative' reverse='true' scope='rows' type='space' />
+            <format attr='subtitle' class='0' field='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2]' scope='rows' value='' />
+            <format attr='auto-subtitle' class='0' field='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2]' scope='rows' value='true' />
+            <format attr='subtitle' class='1' field='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2]' scope='rows' value='' />
+            <format attr='auto-subtitle' class='1' field='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2]' scope='rows' value='true' />
+            <encoding attr='space' class='1' field='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[sum:Rank:qk]' field-type='quantitative' fold='true' scope='rows' type='space' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Line' />
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+              </style-rule>
+            </style>
+          </pane>
+          <pane id='1' selection-relaxation-option='selection-relaxation-allow' y-axis-name='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2]'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Line' />
+            <encodings>
+              <color column='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:ok]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-show' value='false' />
+              </style-rule>
+            </style>
+          </pane>
+          <pane id='2' selection-relaxation-option='selection-relaxation-allow' y-axis-name='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2]' y-index='1'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Circle' />
+            <encodings>
+              <color column='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:ok]' />
+              <text column='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:ok]' />
+            </encodings>
+            <style>
+              <style-rule element='cell'>
+                <format attr='text-align' value='center' />
+                <format attr='vertical-align' value='center' />
+              </style-rule>
+              <style-rule element='mark'>
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-show' value='true' />
+              </style-rule>
+            </style>
+          </pane>
+          <pane id='3' selection-relaxation-option='selection-relaxation-allow' y-axis-name='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[sum:Rank:qk]'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Line' />
+            <encodings>
+              <color column='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:ok]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+              </style-rule>
+            </style>
+          </pane>
+          <pane id='4' selection-relaxation-option='selection-relaxation-allow' y-axis-name='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[sum:Rank:qk]' y-index='1'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Circle' />
+            <encodings>
+              <text column='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:ok]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>([federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2] + ([federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[usr:Calculation_1288592502989193216:qk:2] + ([federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[sum:Rank:qk] + [federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[sum:Rank:qk])))</rows>
+        <cols>[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:Year:ok]</cols>
+      </table>
+    </worksheet>
+  </worksheets>
+  <windows source-height='30'>
+    <window class='worksheet' maximized='true' name='Sheet 1'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card param='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:qk]' show-domain='false' show-null-ctrls='false' type='filter' />
+            <card param='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:Year:qk]' show-domain='false' show-null-ctrls='false' type='filter' />
+            <card param='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:Rank:qk]' show-domain='false' show-null-ctrls='false' type='filter' />
+            <card pane-specification-id='1' param='[federated.0d1tj7q1ni1m3v196ui4w0ecgq36].[none:ATA:ok]' type='color' />
+          </strip>
+        </edge>
+      </cards>
+    </window>
+  </windows>
+</workbook>
