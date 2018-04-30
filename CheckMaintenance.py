@@ -68,7 +68,7 @@ delayfinal = core.getbySerial(delayfinal, commonacs)
 maintfinal = core.getbyDate(b, [years[0], years[-1]])
 maintfinal = core.getbySerial(maintfinal, commonacs)
 
-threshold = 5 # plus minus days between entries in different lists
+threshold = 14 # plus minus days between entries in different lists
 # atalevel = 2 # trying with full ata first
 
 commonlines = []
@@ -79,6 +79,7 @@ for delayline in delayfinal: # runs for like 5 min
     ll = delayline[2] - 86400*threshold # lower limit
     ul = delayline[2] + 86400*threshold # upper limit
     templist = core.getbyTimestamp(maintfinal, [ll,ul])
+    templist = core.getbySerial(templist, delayline[0])
     ata = delayline[5:]
     ata = ''.join(str(e) for e in ata) # make string from ata number
     #print ata

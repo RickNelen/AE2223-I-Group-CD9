@@ -10,11 +10,11 @@ import numpy as np
 import datetime
 
 
-def getdelaylist(atalevel, typ = 0, timeframe = [1988,2015], interval = 36):
+def getdelaylist(atalevel, type = 0, timeframe = [1988,2015], interval = 36): # interval in months, type = 0 means all types
 
     k = core.unpickle("./Data.txt")
-    if typ:
-        k = core.getbyType(k, typ)
+    if type:
+        k = core.getbyType(k, type)
         
     k = core.sortata(k, atalevel)
     
@@ -26,9 +26,13 @@ def getdelaylist(atalevel, typ = 0, timeframe = [1988,2015], interval = 36):
     datelist = []
     
     for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
-        aa = core.datetosec(int(np.floor(l/12)),int(l%12)+1,1)
-        ab = core.datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31)
-        datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y'))
+        aa = core.datetosec(int(np.floor(l/12)),int(l%12)+1,1) # lower limit converted to unix
+        ab = core.datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31) # upper limit in unix
+        
+        # the lower limit is appended to the array outputting the dates used!
+        # This needs to be kept in mind when evaluatign and drawing conclusions!!!
+        datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y')) 
+        
         
         #---------------------------------------------------------------------
         for j in range(1,len(k)):                       #loop for filtering per year 
@@ -78,39 +82,42 @@ def getdelaylist(atalevel, typ = 0, timeframe = [1988,2015], interval = 36):
 
 
 
+# this uses the above function to generate a lot of csv's for top 10s in a lot of year ranges and categories.
+
+
+def gencsvs(): # runs for like 10mins
 # export as csv
-import csv
-#import numpy as np
-
-
-
-for atalevel in range(2,5):
-    for beginyear in [1988, 2011, 2014]:
-        for actype in range(1,4):
-                for interval in [3,6,12,36]:
-                    
-                    newl = []
-                    intl = []
-                    if actype == 3 and beginyear < 1995:
-                        beginyear = 1995
-                    if (beginyear == 1988 or (actype == 3 and beginyear == 1995)) and interval <= 6:
-                        continue
-                    final, datelist = getdelaylist(atalevel, actype, [beginyear,2015], interval)
-                    
-                    for w in range(len(final)):
-                        for k in range(10):
-                            print w, k
-                            intl.append(final[w][k][0])
-                            intl.append(k+1)
-                            intl.append(datelist[w])
-                            newl.append(intl)
-                            intl = []
-                            
-                    with open("DelayTop10_ata%d_ac%d_%d-2015_interv%d.csv" % (atalevel, actype, beginyear, interval), 'wb') as myfile:
-                        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-                        wr.writerow(['ATA', 'Rank', 'Year'])
-                        for row in newl:
-                            wr.writerow(row)
+    import csv
+    
+    for atalevel in range(2,5):
+        for beginyear in [1988, 2011, 2014]:
+            for actype in range(1,4):
+                    for interval in [3,6,12,36]:
+                        
+                        newl = []
+                        intl = []
+                        if actype == 3 and beginyear < 1995:
+                            beginyear = 1995
+                        if (beginyear == 1988 or (actype == 3 and beginyear == 1995)) and interval <= 6:
+                            continue
+                        final, datelist = getdelaylist(atalevel, actype, [beginyear,2015], interval)
+                        
+                        for w in range(len(final)):
+                            for k in range(10):
+                                #print w, k
+                                intl.append(final[w][k][0])
+                                intl.append(k+1)
+                                intl.append(datelist[w])
+                                newl.append(intl)
+                                intl = []
+                                
+                        with open("DelayTop10_ata%d_ac%d_%d-2015_interv%d.csv" % (atalevel, actype, beginyear, interval), 'wb') as myfile:
+                            wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+                            wr.writerow(['ATA', 'Rank', 'Date'])
+                            for row in newl:
+                                wr.writerow(row)
+                                
+    return 0
 
 #
 #with open("DelayTop10.csv", 'wb') as myfile:
