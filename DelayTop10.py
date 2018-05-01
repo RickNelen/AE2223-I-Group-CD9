@@ -10,6 +10,7 @@ import numpy as np
 import datetime
 
 
+<<<<<<< Updated upstream
 def getdelaylist(atalevel, type = 0, timeframe = [1988,2015], interval = 36): # interval in months, type = 0 means all types
 
     k = core.unpickle("./Data.txt")
@@ -18,6 +19,45 @@ def getdelaylist(atalevel, type = 0, timeframe = [1988,2015], interval = 36): # 
         
     k = core.sortata(k, atalevel)
     
+=======
+k = core.unpickle("./Data.txt")
+k = core.getbyType(k,1)
+k = core.sortata(k,3)
+
+delaylist = []
+i=0
+t = []
+final = []
+typelist = []
+typ = 1
+numyear = 28
+
+for l in range(numyear+1):                              #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+    aa = core.datetosec((1988+l),1,1)
+    ab = core.datetosec((1989+l),1,1)
+    #---------------------------------------------------------------------
+    for j in range(1,len(k)):                       #loop for filtering per year 
+        if aa <= k[j][2] < ab:
+            t.append(k[j])
+    c=t[0][3]                                       #need to account for the first line
+    #----------------------------------------------------------------------
+    for i in range(1,len(t)):
+    
+        if t[i][5] == t[i-1][5]:                    #as long as the ata number is the same as the one befor
+            c += t[i][3]                            #adding delaytime
+        if t[i][5] != t[i-1][5]:                    #if a new atanumber is reached
+            j = []                                  #need list to create matrix
+            j.append(t[i-1][5])
+            j.append(c)
+            delaylist.append(j)                     #add [ata,delay]
+            c = t[i][3]                             #reset delay to zero for next ata
+              
+    #--------------------------------------------------------------------------
+    delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
+    #delaylist = delaylist[:10]
+    final.append(delaylist)                          
+    t = []
+>>>>>>> Stashed changes
     delaylist = []
     i = 0
     h = []

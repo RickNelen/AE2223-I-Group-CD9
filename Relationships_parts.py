@@ -10,6 +10,7 @@ Created on Mon Apr 23 14:17:44 2018
 #Kans cancellation als het faalt
 #per aircraft values
 import matplotlib.pyplot as plt
+import numpy as np
 
 from DelayTop10 import final
 temp_delay = final
@@ -71,7 +72,8 @@ f = final_rel_allyears[0][3]
 g = 1
 for i in range(1, len(final_rel_allyears)):
     if final_rel_allyears[i][0] == final_rel_allyears[i-1][0]:                    #as long as the ata number is the same as the one befor
-        d += round(float(365)/final_rel_allyears[i][1],0)                              #adding
+        if final_rel_allyears[i][1] != 0:
+            d += round(float(365)/final_rel_allyears[i][1],0)                              #adding
         e += final_rel_allyears[i][2]                                               #adding
         f += final_rel_allyears[i][3] 
         g += 1                                               #adding
@@ -88,13 +90,46 @@ for i in range(1, len(final_rel_allyears)):
         f = final_rel_allyears[i][3]
 
 
+
 #SCATTERPLOT
 x = []
 y = []
-for i in range(len(final2_rel_allyears)):
-    x.append(final2_rel_allyears[i][1])
-for i in range(len(final2_rel_allyears)):
-    y.append(final2_rel_allyears[i][2])
-area = 10
-plt.scatter(x, y, s=area, alpha=0.5)
+xfinal = []
+yfinal = []
+top10 = [732, 275, 612, 291, 324, 323, 342, 302, 273, 771]
+colours = []
+
+for i in range(len(final2_rel_allyears)):                                       #x-axis
+#    if final2_rel_allyears[i][0] in top10:                                         #highlighting top10
+#        xfinal.append(final2_rel_allyears[i][1])
+#    else:                                                                       #the rest
+        x.append(final2_rel_allyears[i][1])
+#for i in range(len(x)):
+#    xfinal.append(x[i])                                                         #first ten values top 10 for colour coding
+
+for i in range(len(final2_rel_allyears)):                                       #y-axis, same way as above.
+#    if final2_rel_allyears[i][0] in top10:
+#        yfinal.append(final2_rel_allyears[i][2])
+#    else:
+        y.append(final2_rel_allyears[i][2])
+#for i in range(len(y)):
+#    yfinal.append(y[i])
+for i in range(len(final2_rel_allyears)):                                       #colours
+    if float(y[i])/x[i] >= 1.:
+        colours.append('red')
+    if 1. > float(y[i])/x[i] >= 0.1:
+        colours.append('orange')
+    if 0.1 > float(y[i])/x[i]:
+        colours.append('green')
+
+#x = xfinal
+area = 15
+plt.scatter(x, y ,c=colours,  s=area, alpha=0.8)
+x1 = [1,20000]
+y1 = [1,20000]
+x2 = [1,20000]
+y2 = [0.1,2000]
+plt.plot(x1,y1, 'black', alpha = 0,3)
+plt.plot(x2,y2, 'black', alpha = 0.3)
+
 plt.show()
