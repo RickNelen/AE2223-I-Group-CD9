@@ -325,7 +325,7 @@ def fitweibull(histo, plot = 0):
             yfit = weibull(xplot,fb[0], fb[1])
             
             plt.close()
-            plt.title("ATA Component 324 -- Year 2008 -- Stdev: %.1f min" % np.sqrt(v))
+            plt.title("ATA Component 324 -- Year 2008 -- Stdev: %.1f min -- parcor %.3f" % (np.sqrt(v), cov[0,1]) )
             plt.xlabel("Delay Time [min]")
             plt.ylabel("Density")
             plt.plot(xplot,yfit)

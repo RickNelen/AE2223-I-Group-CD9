@@ -10,18 +10,20 @@ import lib.core as core
 import lib.numericals as numericals
 import pickle
 import matplotlib.pyplot as plt
+import datetime
+import time
+
 
 # importing the final top 10 lists
-from DelayTop10 import final
-final_delay = final
+from DelayTop10 import getdelaylist
+# arguments are the atalevel, year range and interval in months. More are possible, check the function
+final_delay = getdelaylist(2, timeframe = [1988,2015], interval = 28*12) # 28*12 are the months included on the total year range
 
-#
-#
 with open("./Data.txt", "rb") as fp:   # Unpickling list all types
    b = pickle.load(fp)
 
 
-delaycutoff = 1 # min time to actually consider something a delay
+delaycutoff = 15 # min time to actually consider something a delay
 #binsize = 5 # unused at the moment, was used for debugging
 
 #actype = 1 # all this was used for debugging
@@ -35,16 +37,26 @@ delaycutoff = 1 # min time to actually consider something a delay
 
 
 
-### Section on delay time
+### Section on fitting stuff to the delay time distributions
 j = 0
-for yeardata in final_delay:
+for yeardata in final_delay[0]:
     atas = []
     for item in yeardata:
         atas.append(item[0])
     
-    c = core.getbyDate(b,[1988 + j, 1989 + j])
+    if len(final_delay[1]) == 1: # if only one entry in the delay ranking, we assume the entire time range was used.
+        ll = int(time.mktime(datetime.datetime.strptime('01/01/1988', "%d/%m/%Y").timetuple()))  # converted to unixtime
+        ul = int(time.mktime(datetime.datetime.strptime('31/12/2015', "%d/%m/%Y").timetuple()))  # converted to unixtime
+    else:
+        # lower limit of time interval for which variance needs to be computed. This is stored in here by the getdelaylist function.
+        # See DelayTop10.py for details
+        ll = int(time.mktime(datetime.datetime.strptime(final_delay[1][j], "%d/%m/%Y").timetuple()))  # converted to unixtime
+        # reverse engineer interval from first two entries
+        interv = int(time.mktime(datetime.datetime.strptime(final_delay[1][1], "%d/%m/%Y").timetuple())) - int(time.mktime(datetime.datetime.strptime(final_delay[1][0], "%d/%m/%Y").timetuple()))
+        ul = ll + interv
+        
+    c = core.getbyTimestamp(b,[ll, ul])
     
-    i = 0
     k = 0
     for ata in atas:
         dataset = core.getbyATA(c, ata)
@@ -63,17 +75,53 @@ for yeardata in final_delay:
         delays = np.matrix(delays)
         
         #bins = range(delays.min(), delays.max(), binsize) # used for debugging
-        hist = [delays, np.histogram(delays, range=[1,delays.max()], bins='fd', density=True)]
+        hist = [delays, np.histogram(delays, range=[delaycutoff,delays.max()], bins='fd', density=True)]
     
-        if ata == 324 and j == 20:
-            (fitbeta, mean, var) = numericals.fitweibull(hist, 1)
+        if True: #ata == 324 and j == 20:
+            (fitbeta, mean, var) = numericals.fitweibull(hist, 1) # also plot it, that's what the 1 is for
         else:
             (fitbeta, mean, var) = numericals.fitweibull(hist, 0)
         
-        final_delay[j][k].append(fitbeta)
-        final_delay[j][k].append(mean)
-        final_delay[j][k].append(var)
+        
+        final_delay[0][j][k].append(fitbeta[0]) # don't remember why they are 1 component lists in this case... the [0] makes it a little neater
+        final_delay[0][j][k].append(mean[0])
+        final_delay[0][j][k].append(var[0])
         
         k += 1
         
     j += 1
+    
+# outputting to csv for representations
+
+import csv
+
+intl = []
+newl = []
+for yeardata in final_delay[0]:
+    for k in range(10):
+        #print w, k
+        intl.append(yeardata[k][0])   # ata
+        intl.append(k+1) # rank
+        intl.append(yeardata[k][1])    # tot delay
+        intl.append(final_delay[1][w]) # data
+        intl.append(yeardata[k][2][0])   # weibk
+        intl.append(yeardata[k][2][1])   # weibLamb
+        intl.append(yeardata[k][3])   # DelMean
+        intl.append(np.sqrt(yeardata[k][4]))   # DelStdDev
+        
+        newl.append(intl)
+        intl = []
+        
+with open("DelayVariancesTotalTop10.csv", 'wb') as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(['ATA', 'Rank', 'TotDelay', 'Date', 'Weibk', 'WeibLamb', 'DelMean', 'DelStdDev'])
+    for row in newl:
+        wr.writerow(row)
+
+
+
+
+
+
+
+

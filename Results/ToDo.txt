@@ -1,0 +1,4 @@
+Zoom out to ATA chapter instead of 3-4 digits
+same style plots for freq and canc.
+Check and compare variances between components
+Compute variance in TBM

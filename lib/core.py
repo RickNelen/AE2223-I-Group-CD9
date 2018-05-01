@@ -67,16 +67,20 @@ def getbySerial (data, serial):
     # inputs:
     #   data (list of lists or mixed type. last six fields in each sublists must be int):
     #           list containing all data lines as one sublist per data line
-    #   serial  (int): aircraft serial number to be filtered. 
+    #   serial  (list or int): aircraft serial numbers to be filtered. 
     
     # output:
     #   filtered: list of all sublists in the data list that concerning the specified serial number
     
     filtered = []
     
+    if not isinstance(serial, list):
+        serial = [serial]
+    
     for line in data:
-        if int(line[0]) == serial:
-            filtered.append(line)
+        for numb in serial:
+            if int(line[0]) == numb:
+                filtered.append(line)
             
     return filtered
     
@@ -100,7 +104,25 @@ def getbyDelay (data, limits):
             filtered.append(line)
             
     return filtered
+
+#Author: Till 
+def getbyTimestamp (data, limits):
+    # inputs:
+    #   data (list of lists or mixed type. last six fields in each sublists must be int):
+    #           list containing all data lines as one sublist per data line
+    #   limits  (list of two int): lower and upper limits for the timestamp region to be filtered
     
+    # output:
+    #   filtered: list of all sublists in the data list that are contained in the delay interval
+    
+    filtered  = []
+            
+    for line in data:
+        if int(line[2]) > limits[0] and int(line[2]) < limits[1]:
+            filtered.append(line)
+            
+    return filtered
+
 #Author: Till 
 def getbyCancelled (data, cancelled):
     # gets all lines in a data list that are concerning one specific aircraft type
