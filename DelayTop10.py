@@ -9,7 +9,7 @@ import lib.core as core
 
 
 k = core.unpickle("./Data.txt")
-k = core.sortata(k,3)
+k = core.sortata(k,2)
 
 delaylist = []
 i=0
