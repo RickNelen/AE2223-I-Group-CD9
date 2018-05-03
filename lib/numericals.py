@@ -104,10 +104,8 @@ def bytype(dataset, top_x):
         byserial(intermediate, len(intermediate), 0)
         final_ranked_list.append(intermediate)
         counter += 1
-"""Still have to work on it. Kind of fucked up"""            
-        
-        
     return final_ranked_list
+"""Still have to work on it. Kind of fucked up"""
 
 def bydate(dataset, top_x):
     #Note that this takes the unix values. therefore, it's not readable. 
@@ -179,24 +177,34 @@ def rankme(dataset, top_x, column):
 #       itern : number of iteration needed to converge 
 
 """
-example model function:
+example model function (this is a tri-modal weibull with 6 parameters in total):
 def model(beta, x):
     return 1./3 *beta[0]/beta[1] * (x/beta[1])**(beta[0]-1) * np.exp(-1*(x/beta[1])**beta[0]) + 1./3 *beta[2]/beta[3] * (x/beta[3])**(beta[2]-1) * np.exp(-1*(x/beta[3]**beta[2]) + 1./3 *beta[4]/beta[5] * (x/beta[5])**(beta[4]-1) * np.exp(-1*(x/beta[5]**beta[4])))
 """
 
 
 
-def lstsquares(model, n, beta, data, h):
+def lstsquares(model, n, beta, data, h=1e-4): # obsolete, cause I am now using a built-in
     
     ## load modules
     import numpy as np
     import numpy.linalg as la
-    import scipy.stats as chi2
-        
-    ## Computations
-    def r(beta,x,y): return y - model(beta,x); # parametric error function, y and x must be same length vectors. beta is vector too, of course
+    import scipy.stats as stats
     
-    ## helper functions
+    #print data.size
+    
+    if np.isnan(data[0,1]): # is the data array empty?
+        raise TypeError("Data array passed is empty")
+        
+    
+    datax = data[:,0]
+    datay = data[:,1]
+    
+    
+    ## Computations
+    def r(beta,x,y):
+        return y - model(beta,x); # parametric error function, y and x must be same length vectors. beta is vector too, of course
+        
     def jacobian(fun,x,beta,h):
         # computes the jacobian for the Newton Gau? Method
         # works in a loop and computes every partial derivative with the finite
@@ -206,43 +214,136 @@ def lstsquares(model, n, beta, data, h):
         n = len(beta) # dimensions of the Jacobian, m rows, n columns
         m = len(x)
         
-        J = np.zeros([n,n])
+        J = np.zeros([m,n])
         for i in range(m):
             for j in range(n):
                 helper    = np.matrix(np.zeros([n,1]));
                 helper[j] = 1; # helper helps to change only the entry in the beta vector that must be considered
                 zeta1     = beta + 0.5* h*helper; # finite difference method with central differences
                 zeta2     = beta - 0.5* h*helper;
-                J[i,j]    = (fun(zeta1,x(i),1)-fun(zeta2,x(i),1))/h;
-    
-    beta = np.transpose(np.array([2,1,6,6,10,11])); # must be a column vector
+                J[i,j]    = (fun(zeta1,x[i],1)-fun(zeta2,x[i],1))/h;
+        
+        return np.transpose([J]) # don't remember why I have to take the transpose, but this works reliably
     
     itern = 1
     conti = True;
     while conti:
+        
         # main loop, here the Newton Gauss is facilitated
         J = jacobian(r,datax,beta,h) # O(length(datax)*length(beta))
-        betanew = beta - la.pinv(J)*r(beta,datax,datay) # O(2n*m+m^3+n^2*m) pseudoinverse, like in Least Square in LinAlg
+        betanew = beta - np.array(np.matrix(la.pinv(J)) * np.matrix(r(beta,datax,datay))) # O(2n*m+m^3+n^2*m) pseudoinverse, like in Least Square in LinAlg
         itern += 1
+        
+        #print betanew, beta
+        #print la.norm(betanew-beta)
         if la.norm(betanew-beta) < h:
             conti = False
             gamma = beta
+        if itern > 10:
+            print "max itern"
+            conti = False
+            gamma = np.array([0,0])
+        beta = betanew
     
+    print "done"
     
     ## Chi squared test
     
     modely = model(beta,data[:,0])
     
-    Xsquare = sum((datay - modely)**2/modely)
+    Xsquare = sum(np.array((datay - modely))**2/np.array(modely))
     
-    probnull = chi2.cdf(Xsquared) # how likely is obtained X square value if all is independant (ie null hypothesis)
+    probnull = stats.chi2.cdf(Xsquare,len(datax)-1) # how likely is obtained X square value if all is independant (ie null hypothesis)
     pval = 1-probnull
     
      
     
     return (gamma, pval, itern)
-    
-    
 
 
+
+
+
+def fitweibull(histo, plot = 0):
+    # takes _one_ normalized histogram from np.histogram and fits a weibull to it using init guess k=1.5, lambda = 20.
+    # now uses scipy builtin function for the fitting
+    
+    import numpy as np
+    import scipy.special as sp # import the special functions for gamma
+    import matplotlib.pyplot as plt
+    from scipy.optimize import curve_fit
+    
+    # model function: weibull
+    #def weibull(beta, x):
+     #   return beta[0]/beta[1] * np.multiply(np.power((np.array(x)/beta[1]),(beta[0]-1)), np.exp(-1* np.power((np.array(x)/beta[1]),beta[0])))
+    
+    def weibull(x, k, lamb): # parametric model for the scipi implementation of lstsquares
+        return k/lamb * (x/lamb)**(k-1) * np.exp(-(x/lamb)**k)
+    
+    
+    fitbeta = []
+    mean    = []
+    var     = []
+#    pval    = []
+#    iternum = []
+    
+    i = 0
+    # idea for faster runtime/better convergence --> make weibull initial
+    # guess beta[1] = index of max of histo instead of constant [1,20]
+    #(fb, p, it) = lstsquares(weibull, 2, np.transpose([np.array([1.,20.])]), np.concatenate((np.matrix(histo[1][1][1:]).T, np.matrix(histo[1][0]).T), axis = 1) )
+   
+    try:
+        fb, cov = curve_fit(weibull, histo[1][1][1:], histo[1][0], [1.5, 20.]) # I ditched my own implementation and used this one
+    except RuntimeError:
+        fb = np.array([0,0])
+    except ValueError:
+        fb = np.array([0,0])
+    
+    if not fb[0]: # if fitting failed:
+        
+        fitbeta.append(np.array([0,0]))
+        mean.append(0)
+        var.append(0)
+#        pval.append(0)
+#        iternum.append(0)
+        
+    else:
+        # calculate mean
+        m = fb[1]*sp.gamma(1+1/fb[0]) # wikipedia: weibull distribution
+    
+        # calculate variance in the weibull fit data
+        v = fb[1]**2 * ( sp.gamma(1+2./fb[0]) - sp.gamma(1+1./fb[0])**2 ) # wikipedia: Weibull distribution
+        
+        
+        fitbeta.append(fb)
+        mean.append(m)
+        var.append(v)
+    
+        #optional plotting
+        if plot:
+            xplot = np.arange(0,400,1)
+            yfit = weibull(xplot,fb[0], fb[1])
+            
+            plt.close()
+            plt.title("ATA Component 324 -- Year 2008 -- Stdev: %.1f min -- parcor %.3f" % (np.sqrt(v), cov[0,1]) )
+            plt.xlabel("Delay Time [min]")
+            plt.ylabel("Density")
+            plt.plot(xplot,yfit)
+            plt.plot( histo[1][1][1:], histo[1][0] )
+            plt.xlim([0,400])
+            plt.savefig("ATA324_Fit.eps")
+            plt.show()
+        
+        i += 1
+        
+    
+    return (fitbeta, mean, var)
+    
+    
+    
+    
+    
+    
+    
+    
     
