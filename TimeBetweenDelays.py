@@ -94,9 +94,9 @@ for component in range(0,len(atas2)):
     """
     # histogram with bins 0-10, 10-20 etc until 100
     hist.append(np.histogram(tbf[component], bins=np.arange(0,30,3), range=(0.,100.)) )
-    fig, ax = plt.subplots()
-    ax.bar(hist[component][1][0:-1],hist[component][0],width=3)
-    plt.show
+    #fig, ax = plt.subplots()
+    #ax.bar(hist[component][1][0:-1],hist[component][0],width=3)
+    #plt.show
 
 # ToDo: Check with more planes/ATAs, that often the TBF is almost zeros or rather large never in between
 # fit some sort of bi-modal distribution through some (find out what "some" means in the context). Find out how to come of with a confidence bound until
