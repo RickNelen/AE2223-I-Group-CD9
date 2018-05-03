@@ -10,13 +10,15 @@ Created on Mon Apr 23 14:17:44 2018
 #Kans cancellation als het faalt
 #per aircraft values
 import matplotlib.pyplot as plt
+import lib.core as core
 import numpy as np
 
-from DelayTop10 import final
-temp_delay = final
-final = []
-from FreqTop10 import final
-temp_freq = final 
+k = core.unpickle("./Data.txt")                                                 #getting the data ready
+k = core.sortata(k, 3)
+delay, date = core.getdelaylist([1988,2015],36,k)
+temp_delay = delay
+freq = core.frequency([1988,2015],36,k)
+temp_freq = freq 
 
 temp2_freq = []
 final_freq = []
@@ -26,7 +28,7 @@ final_rel_allyears = []
 temp_rel = []
 temp2_rel = []
 final2_rel_allyears = []
-
+#---------------------------------------------------------------------------------------- sorting starts
 for i in range(len(temp_freq)):                            #sorting loop, for combining delay and frequency, frequency part
     temp = temp_freq[i]
     app_temp = sorted(temp,key=lambda x: x[0])
@@ -43,7 +45,7 @@ for i in range(len(temp2_freq)):
         temp2_freq[i][j].append(final_delay[i][j][1])
 
 final = temp2_freq
-
+#----------------------------------------------------------------------------------------actual program starts
 for i in range(len(final)):                                     #relation loop
     for j in range(len(final[i])):
         a = round(float(365)/final[i][j][1],0)                  #amount of days average delay
@@ -62,7 +64,7 @@ for i in range(len(final)):                                     #relation loop
     temp2_rel = []
 
 
-#combining the same atanumber lines
+#--------------------------------------------------------------------------------------combining the same atanumber lines
 #USED FOR THE ALL YEARS COMBINED LIST
 final_rel_allyears = sorted(final_rel_allyears,key=lambda x: x[0])
 j = []
@@ -91,7 +93,7 @@ for i in range(1, len(final_rel_allyears)):
 
 
 
-#SCATTERPLOT
+#------------------------------------------------------------------------------------------SCATTERPLOT
 x = []
 y = []
 xfinal = []
@@ -122,14 +124,15 @@ for i in range(len(final2_rel_allyears)):                                       
     if 0.1 > float(y[i])/x[i]:
         colours.append('green')
 
-#x = xfinal
+#--------------------------------------------------------------------------------------diaganol lines
 area = 15
 plt.scatter(x, y ,c=colours,  s=area, alpha=0.8)
-x1 = [1,20000]
+
+x1 = [1,20000]                                                                  #lines in the graph
 y1 = [1,20000]
 x2 = [1,20000]
 y2 = [0.1,2000]
-plt.plot(x1,y1, 'black', alpha = 0,3)
-plt.plot(x2,y2, 'black', alpha = 0.3)
+plt.plot(x1 , y1, c = 'black', alpha = 0.3)
+plt.plot(x2 , y2, c = 'black', alpha = 0.3)
 
 plt.show()
