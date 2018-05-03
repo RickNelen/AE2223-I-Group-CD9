@@ -15,7 +15,7 @@ import lib.core as core
 
 #def getdelaylist(type = 0, timeframe = [1988,2015], interval = 36, k)
 k = core.unpickle("./Data.txt")                                                 #getting the data ready
-k = core.sortata(k, 3)
+k = core.sortata(k, 4)
 delay, date = core.getdelaylist([1988,2015],36,k)                               #getting the data ready till here
 
 for i in range(len(delay)):                                                  #removing all the 0 delays.
