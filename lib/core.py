@@ -315,17 +315,13 @@ def sortata(data,digits):
 def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means all types
     import numpy as np
     import datetime
-    delaylist = []
-    i = 0
-    h = []
-    t = []
-    final = []
-    datelist = []
     
+    datelist = []
+    final = []
     for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
         aa = datetosec(int(np.floor(l/12)),int(l%12)+1,1) # lower limit converted to unix
         ab = datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31) # upper limit in unix
-        
+        t = []
         # the lower limit is appended to the array outputting the dates used!
         # This needs to be kept in mind when evaluatign and drawing conclusions!!!
         datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y')) 
@@ -335,113 +331,225 @@ def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means 
         for j in range(1,len(k)):                       #loop for filtering per year 
             if aa <= k[j][2] < ab:
                 t.append(k[j])
-        c=t[0][3]                                       #need to account for the first line
+    #        c=t[0][3]                                       #need to account for the first line
         #----------------------------------------------------------------------
+        temp = [t[0][5], t[0][3]]
+        cancel = 0
+        almostfinal = []
+        
         for i in range(1,len(t)):
-        
-            if t[i][5] == t[i-1][5]:                    #as long as the ata number is the same as the one befor
-                c += t[i][3]                            #adding delaytime
-                if t[i][4] == 0:
-                    h.append(t[i][3])                       #statistical stuff
-            if t[i][5] != t[i-1][5]:                    #if a new atanumber is reached
-                j = []                                  #need list to create matrix
-                j.append(t[i-1][5])
-                j.append(c)
-                j.append(h)
-                delaylist.append(j)                     #add [ata,delay]
-                c = t[i][3]                             #reset delay to zero for next ata
-                h = [t[i][3]]  
-        #--------------------------------------------------------------------------
-        delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
-        
-        final.append(delaylist)
-        t = []
-        delaylist = []
-        
-        
-    return final, datelist
-
-
-def frequency(timeframe, interval, k):
-    import numpy as np
-    import datetime
-    freqlist = []                                       #frequency per time frame
-    t = []                                              #temporary list for storage
-    i=0
-    j=0
-    l=0
-    final = []                                          #
-    datelist = []
-    s=1
-    #s = input("""which column needs to be sorted?"
-    #              1 = Frequency delays
-    #              2 = Frequency cancellations 
-    #              3 = Ratio cancellations over frequency""")
-    
-    for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
-        aa = datetosec(int(np.floor(l/12)),int(l%12)+1,1) # lower limit converted to unix
-        ab = datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31) # upper limit in unix
-        
-        # the lower limit is appended to the array outputting the dates used!
-        # This needs to be kept in mind when evaluatign and drawing conclusions!!!
-        datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y'))
-        #---------------------------------------------------------------------
-        for j in range(1,len(k)):                       #loop for filtering per year 
-            if aa <= k[j][2] < ab:
-                t.append(k[j])
-        cancel = t[1][4]                                #need to account for the first line
-        c=1                                             #need to account for the first line
-        #----------------------------------------------------------------------
-        for i in range(1,len(t)):                       #loop for the details
             if t[i][5] == t[i-1][5]:
-                c += 1                                  #frequency increase of 1
-                cancel += t[i][4]                       #number of cancellations
+                if t[i][4] == 0:
+                    temp.append(t[i][3])
+                if t[i][4] == 1:
+                    cancel += 1
             if t[i][5] != t[i-1][5]:
-                j = []
-                ratio = round((float(cancel)/c)*100 ,2) #rounding the number (number,digits)
-                j.append(t[i-1][5])                     #making the matrix
-                j.append(c)
-                j.append(cancel)
-                j.append(ratio)
-                freqlist.append(j)
-                c = 1                                   #need to account for the first new
-                cancel = t[i][4]  
-        #--------------------------------------------------------------------------
-        freqlist = sorted(freqlist,key=lambda x: x[s] ,reverse=True)
-        
-        final.append(freqlist)                          #need to accoutn for the first new
-        l += 1
-        t = []
-        freqlist = []
-    return final
-
-def combining(freq, delay):
-    temp_freq = []
-    temp_delay = []
-    combined = []
-    temp1 = []
-    temp2 = []
+                atadel = [temp[0], sum(temp[1:len(temp)]), (len(temp)-1), cancel, round((float(cancel)/((len(temp)-1)+cancel)),2)]#pure chaos
+                atadel.append(temp[1:len(temp)])
+                almostfinal.append(atadel)
+                if t[i][4] == 0:
+                    temp = [t[i][5], t[i][3]]
+                    cancel = 0
+                if t[i][4] == 1:
+                    temp = [t[i][5]]
+                    cancel = t[i][4]
+    #        if i == (len(t)-1):
+                
+        atadel = [temp[0], sum(temp[1:len(temp)]), (len(temp)-1), cancel, round((float(cancel)/((len(temp)-1)+cancel)),2)]#pure chaos
+        atadel.append(temp[1:len(temp)])
+        almostfinal.append(atadel)
+        almostfinal.sort(key=lambda x: x[1], reverse=True)
+        atadel = []
+        final.append(almostfinal)
     
-    for i in range(len(freq)):                            #sorting loop, for combining delay and frequency, frequency part
-        temp = freq[i]
-        temp = sorted(temp,key=lambda x: x[0])
-        temp_freq.append(temp)
     
-    for i in range(len(delay)):                            #sorting loop, for combining delay and frequency, delay part
-        temp = delay[i]
-        temp = sorted(temp,key=lambda x: x[0])
-        temp_delay.append(temp)
+    return final, datelist
     
-    for i in range(len(freq)):
-        for j in range(len(freq[i])):
-            for l in range(len(freq[i][j])):
-                temp1.append(freq[i][j][l])
-            temp1.append(delay[i][j][1])
-            temp1.append(delay[i][j][2])
-            temp2.append(temp1)
-            temp1 = []
-        combined.append(temp2)
-        temp2 = []
-    return combined
-
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #    import numpy as np
+#    import datetime
+##    delaylist = []
+##    i = 0
+##    h = []
+#    t = []
+##    final = []
+#    datelist = []
+#    for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+#        aa = datetosec(int(np.floor(l/12)),int(l%12)+1,1) # lower limit converted to unix
+#        ab = datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31) # upper limit in unix
+#        
+#        # the lower limit is appended to the array outputting the dates used!
+#        # This needs to be kept in mind when evaluatign and drawing conclusions!!!
+#        datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y')) 
+#        
+#        
+#        #---------------------------------------------------------------------
+#        for j in range(1,len(k)):                       #loop for filtering per year 
+#            if aa <= k[j][2] < ab:
+#                t.append(k[j])
+##        c=t[0][3]                                       #need to account for the first line
+#        #----------------------------------------------------------------------
+#        temp = [t[0][5], t[0][3]]
+#        cancel = 0
+#        for i in range(len(t)):
+#            if t[i][5] == t[i-1][5]:
+#                if t[i][4] == 0:
+#                    temp.append(t[i][3])
+#                if t[i][4] == 1:
+#                    cancel += 1
+#            if t[i][5] != t[i-1][5]:
+#                atadel = [temp[0], sum(temp[1,len(temp)]), len(temp), cancel, (cancel/(len(temp)+cancel))]#pure chaos
+#                atadel.append(temp[1:len(temp)])                                #all different delays
+#                
+#
+#
+#
+#
+#
+#
+#
+#
+##        for i in range(1,len(t)):
+##        
+##            if t[i][5] == t[i-1][5]:                    #as long as the ata number is the same as the one befor
+##                if t[i][4] == 0:
+##                    h.append(t[i][3])                       #statistical stuff
+##                    c += t[i][3]                            #adding delaytime
+##            if t[i][5] != t[i-1][5]:                    #if a new atanumber is reached
+##                j = []                                  #need list to create matrix
+##                j.append(t[i-1][5])
+##                j.append(c)
+##                j.append(h)
+##                delaylist.append(j)                     #add [ata,delay]
+##                if t[i][4] == 0:
+##                    c = t[i][3]                         #reset delay to zero for next ata
+##                    h = [t[i][3]]
+##                if t[i][4] == 1:
+##                    c = 0
+##                    h = []
+#                  
+#        #--------------------------------------------------------------------------
+#        delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
+#        
+#        final.append(delaylist)
+#        t = []
+#        delaylist = []
+#        
+#        
+#    return final, datelist
+#
+#
+#def frequency(timeframe, interval, k):
+#    import numpy as np
+#    import datetime
+#    freqlist = []                                       #frequency per time frame
+#    t = []                                              #temporary list for storage
+#    i=0
+#    j=0
+#    l=0
+#    final = []                                          #
+#    datelist = []
+#    s=1
+#    #s = input("""which column needs to be sorted?"
+#    #              1 = Frequency delays
+#    #              2 = Frequency cancellations 
+#    #              3 = Ratio cancellations over frequency""")
+#    
+#    for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+#        aa = datetosec(int(np.floor(l/12)),int(l%12)+1,1) # lower limit converted to unix
+#        ab = datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31) # upper limit in unix
+#        
+#        # the lower limit is appended to the array outputting the dates used!
+#        # This needs to be kept in mind when evaluatign and drawing conclusions!!!
+#        datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y'))
+#        #---------------------------------------------------------------------
+#        for j in range(1,len(k)):                       #loop for filtering per year 
+#            if aa <= k[j][2] < ab:
+#                t.append(k[j])
+#        cancel = t[1][4]                                #need to account for the first line
+#        c=1                                             #need to account for the first line
+#        #----------------------------------------------------------------------
+#        for i in range(1,len(t)):                       #loop for the details
+#            if t[i][5] == t[i-1][5]:
+#                c += 1                                  #frequency increase of 1
+#                cancel += t[i][4]                       #number of cancellations
+#            if t[i][5] != t[i-1][5]:
+#                j = []
+#                ratio = round((float(cancel)/c)*100 ,2) #rounding the number (number,digits)
+#                j.append(t[i-1][5])                     #making the matrix
+#                j.append(c)
+#                j.append(cancel)
+#                j.append(ratio)
+#                freqlist.append(j)
+#                c = 1                                   #need to account for the first new
+#                cancel = t[i][4]  
+#        #--------------------------------------------------------------------------
+#        freqlist = sorted(freqlist,key=lambda x: x[s] ,reverse=True)
+#        
+#        final.append(freqlist)                          #need to accoutn for the first new
+#        l += 1
+#        t = []
+#        freqlist = []
+#    return final
+#
+#def combining(freq, delay):
+#    temp_freq = []
+#    temp_delay = []
+#    combined = []
+#    temp1 = []
+#    temp2 = []
+#    
+#    for i in range(len(freq)):                            #sorting loop, for combining delay and frequency, frequency part
+#        temp = freq[i]
+#        temp = sorted(temp,key=lambda x: x[0])
+#        temp_freq.append(temp)
+#    
+#    for i in range(len(delay)):                            #sorting loop, for combining delay and frequency, delay part
+#        temp = delay[i]
+#        temp = sorted(temp,key=lambda x: x[0])
+#        temp_delay.append(temp)
+#    
+#    for i in range(len(freq)):
+#        for j in range(len(freq[i])):
+#            for l in range(len(freq[i][j])):
+#                temp1.append(freq[i][j][l])
+#            temp1.append(delay[i][j][1])
+#            temp1.append(delay[i][j][2])
+#            temp2.append(temp1)
+#            temp1 = []
+#        combined.append(temp2)
+#        temp2 = []
+#    return combined
+#
+#
