@@ -108,3 +108,5 @@ for i in range(len(impact)):
     temp2grad.sort(key= lambda x:x[6], reverse = True)
     impactgraded.append(temp2grad)
     temp2grad = []
+#OUTPUT =
+#period [ATA, total delay, delayfreq, cancelfreq, cancelratio, [all delays seperate]]
