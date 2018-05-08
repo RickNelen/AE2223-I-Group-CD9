@@ -44,6 +44,9 @@ for i in range(len(xdata)):
         cmap.append('k')
     
 ax.scatter3D(xdata, ydata, zdata, c = cmap)
+ax.set_xlabel('total delay')
+ax.set_ylabel('delay frequency')
+ax.set_zlabel('cancellation frequency')
 plt.show
 
 #ax.scatter3D(xdata, ydata, zdata, c = cmap)
