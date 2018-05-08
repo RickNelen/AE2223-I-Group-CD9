@@ -43,14 +43,15 @@ for i in range(len(xdata)):
     if int(str(delay[year][i]).strip('[')[:2]) in powerplant:
         cmap.append('k')
     
+
 ax.scatter3D(xdata, ydata, zdata, c = cmap)
+
+
+ax.set_xlim3d(0, 2000)
+ax.set_ylim3d(0,30)
+ax.set_zlim3d(0,30)
+
 ax.set_xlabel('total delay')
 ax.set_ylabel('delay frequency')
 ax.set_zlabel('cancellation frequency')
 plt.show
-
-#ax.scatter3D(xdata, ydata, zdata, c = cmap)
-#ax.set_xlim3d(0, 2000)
-#ax.set_ylim3d(0,30)
-#ax.set_zlim3d(0,30)
-#plt.show
