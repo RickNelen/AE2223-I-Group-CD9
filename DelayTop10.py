@@ -9,15 +9,15 @@ import lib.core as core
 import numpy as np
 import datetime
 
-
-def getdelaylist(atalevel, type = 0, timeframe = [1988,2015], interval = 36): # interval in months, type = 0 means all types
-
-    k = core.unpickle("./Data.txt")
-    if type:
-        k = core.getbyType(k, type)
+k = core.unpickle("./Data.txt")
+if type:
+    k = core.getbyType(k, type)
         
-    k = core.sortata(k, atalevel)
-    
+    k = core.sortata(k, 3)
+
+#def getdelaylist(type = 0, timeframe = [1988,2015], interval = 36, k):
+def getdelaylist(type = 0, timeframe = [1988,2015], interval = 36, k): # interval in months, type = 0 means all types
+
     delaylist = []
     i = 0
     h = []
@@ -44,14 +44,16 @@ def getdelaylist(atalevel, type = 0, timeframe = [1988,2015], interval = 36): # 
         
             if t[i][5] == t[i-1][5]:                    #as long as the ata number is the same as the one befor
                 c += t[i][3]                            #adding delaytime
-                h.append(t[i][3])                       #statistical stuff
+                if t[i][4] != 1:
+                    h.append(t[i][3])                       #statistical stuff
             if t[i][5] != t[i-1][5]:                    #if a new atanumber is reached
                 j = []                                  #need list to create matrix
                 j.append(t[i-1][5])
                 j.append(c)
+                j.append(h)
                 delaylist.append(j)                     #add [ata,delay]
                 c = t[i][3]                             #reset delay to zero for next ata
-                h = []  
+                h = [t[i][3]]  
         #--------------------------------------------------------------------------
         delaylist = sorted(delaylist,key=lambda x: x[1] ,reverse=True)
         delaylist = delaylist[:10]
