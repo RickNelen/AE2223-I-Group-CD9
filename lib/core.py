@@ -366,7 +366,82 @@ def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means 
     return final, datelist
     
     
+def makebumpplot(csvname, epsname, title, timelabels, top):  # assumed input csv path "Top10csv", assumed image output path "results/rankings"
     
+    
+    from matplotlib import pyplot as plt
+    import os
+    import csv
+    import numpy as np
+      
+    with open(os.path.join('..', 'Top10csv', csvname), 'rb') as csvfile:
+        ranking_raw = csv.reader(csvfile, delimiter=';', quotechar='|')
+        ranking = []
+        i = 0
+        for line in ranking_raw:
+            split = line[0].split(',');
+            if i > 0 and int(split[1]) <= top:
+                items = []
+                for item in split:
+                    items.append(item)
+                ranking.append(items)
+            i += 1
+    
+    
+    n = len(ranking) / top
+    
+    atasint = []
+    for line in ranking:
+        if int(line[0]) not in atasint:
+            atasint.append(int(line[0]))
+            
+    atas = []
+    for ata in atasint:
+        atas.append([ata])
+    
+    
+    k = 0
+    for ata in atas:
+        for i in range(n):
+            temp = 0
+            for j in range(top):
+                idx = i * top + j
+                if ata[0] == int(ranking[idx][0]):
+                    temp = int(ranking[idx][1])
+            if temp != 0:
+                atas[k].append(temp)
+            else:
+                atas[k].append(float('nan'))
+        k += 1
+    
+    atas = np.matrix(atas)
+    atas = atas.T
+    
+    plt.close()
+    plt.figure(figsize=(15./11. + 15./11.*n, 9./11 + 9./11 * top))
+    plt.plot(atas[1:,:])
+    
+    for pythonsucks in range(len(atasint)):
+        plt.scatter(np.arange(n), np.array(atas[1:,pythonsucks]), 800, marker='o', edgecolors = 'k')
+        
+        for x,y in zip( np.arange(n), np.array(atas[1:,pythonsucks]) ):
+            plt.annotate(
+                str(int(np.array(atas[0,pythonsucks]))),
+                xy=(x, y[0]), xytext=(0, 0),
+                textcoords='offset points', ha='center', va='center',
+                size = 'x-large',
+                color = 'white'
+                #bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+                #arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0')
+                )
+            
+    plt.ylim(top+1,0)
+    plt.ylabel('Rank')
+    plt.title(title)
+    plt.yticks(np.arange(top) + 1, np.arange(top) + 1 )
+    plt.xticks(np.arange(n), timelabels, rotation=90)
+    plt.show()
+    plt.savefig(os.path.join('..','Results','rankings',epsname))
     
     
     
