@@ -302,14 +302,18 @@ def findunique(data,serial_ata,digits):    #Data is in the usual format
 def sortata(data,digits): 
  
     j = 5+digits 
-     
+    beun = data
     for i in range(len(data)): 
-        data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])] 
-        data[i][5] = int(data[i][5]) 
+        beun[i][5:11] = [reduce(lambda x, y: str(x) + str(y), beun[i][5:j])] 
+        beun[i][5] = int(beun[i][5]) 
         
     data.sort(key=lambda x: x[5]) 
      
-    return data
+    return beun
+
+
+
+
 
 #def getdelaylist(type = 0, timeframe = [1988,2015], interval = 36, k):
 def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means all types
@@ -361,8 +365,18 @@ def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means 
         almostfinal.sort(key=lambda x: x[1], reverse=True)
         atadel = []
         final.append(almostfinal)
-    
-    
+        
+        #FINDING HOW MANY UNIQUE ATA NUMBERS IN FINAL PER TOP 10
+        # =============================================================================
+        #uniqueata = []
+        #for y in range (len(final)):
+        #    for l in range (10):
+        #        uniqueata.append(final[y][l][0])
+        #uniqueata = set(uniqueata)
+        #uniqueata = list(uniqueata)
+        #print 'amount of unique ATA-numbers:', len(uniqueata)
+        # =============================================================================
+        
     return final, datelist
     
     
@@ -373,17 +387,19 @@ def makebumpplot(csvname, epsname, title, timelabels, top):  # assumed input csv
     import os
     import csv
     import numpy as np
+    
+    
       
-    with open(os.path.join('..', 'Top10csv', csvname), 'rb') as csvfile:
+    with open(os.path.join('Top10csv', csvname), 'rb') as csvfile:
         ranking_raw = csv.reader(csvfile, delimiter=';', quotechar='|')
         ranking = []
         i = 0
         for line in ranking_raw:
             split = line[0].split(',');
-            if i > 0 and int(split[1]) <= top:
+            if i > 0 and int(split[1].split('"')[1]) <= top:
                 items = []
                 for item in split:
-                    items.append(item)
+                    items.append(item.split('"')[1]) # because python sucks
                 ranking.append(items)
             i += 1
     
@@ -440,8 +456,8 @@ def makebumpplot(csvname, epsname, title, timelabels, top):  # assumed input csv
     plt.title(title)
     plt.yticks(np.arange(top) + 1, np.arange(top) + 1 )
     plt.xticks(np.arange(n), timelabels, rotation=90)
+    plt.savefig(os.path.join('Results','rankings',epsname), format='eps', dpi=1000)
     plt.show()
-    plt.savefig(os.path.join('..','Results','rankings',epsname))
     
     
     
