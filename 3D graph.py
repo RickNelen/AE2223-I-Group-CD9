@@ -89,9 +89,9 @@ for year in range(len(delay)):
         x, y, z = data
         ax.scatter(x, y, z, alpha=0.65, c=color, s=10, label=group)
     
-    ax.set_xlim(0,2000)
-    ax.set_ylim(0,30)
-    ax.set_zlim(0,30)
+    ax.set_xlim(0,20000)
+    #ax.set_ylim(0,30)
+    #ax.set_zlim(0,30)
     ax.set_xlabel('total delay')
     ax.set_ylabel('delay frequency')
     ax.set_zlabel('cancellation frequency')
