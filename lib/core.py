@@ -302,14 +302,18 @@ def findunique(data,serial_ata,digits):    #Data is in the usual format
 def sortata(data,digits): 
  
     j = 5+digits 
-     
+    beun = data
     for i in range(len(data)): 
-        data[i][5:11] = [reduce(lambda x, y: str(x) + str(y), data[i][5:j])] 
-        data[i][5] = int(data[i][5]) 
+        beun[i][5:11] = [reduce(lambda x, y: str(x) + str(y), beun[i][5:j])] 
+        beun[i][5] = int(beun[i][5]) 
         
     data.sort(key=lambda x: x[5]) 
      
-    return data
+    return beun
+
+
+
+
 
 #def getdelaylist(type = 0, timeframe = [1988,2015], interval = 36, k):
 def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means all types
@@ -361,12 +365,155 @@ def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means 
         almostfinal.sort(key=lambda x: x[1], reverse=True)
         atadel = []
         final.append(almostfinal)
-    
-    
+        
+        #FINDING HOW MANY UNIQUE ATA NUMBERS IN FINAL PER TOP 10
+        # =============================================================================
+        #uniqueata = []
+        #for y in range (len(final)):
+        #    for l in range (10):
+        #        uniqueata.append(final[y][l][0])
+        #uniqueata = set(uniqueata)
+        #uniqueata = list(uniqueata)
+        #print 'amount of unique ATA-numbers:', len(uniqueata)
+        # =============================================================================
+        
     return final, datelist
+
+def getfreqlist(timeframe , interval, k, s): # s is the lambda key:
+                                               # 1 for freqency delays
+                                               # 2 for Frequency cancellations
+                                               # 3 Ratio cancellations over frequency
+    ### author, Till & Laurens ###
+    import numpy as np
+    import datetime
+    
+    cancellist = []                                       #frequency per time frame
+    t = []                                              #temporary list for storage
+    i=0
+    j=0
+    l=0
+    final = []         
+    datelist = []                                 #
+    
+    for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+        t = []
+        freqlist = []
+        aa = datetosec(int(np.floor(l/12)),int(l%12)+1,1) # lower limit converted to unix
+        ab = datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31) # upper limit in unix
+        t = []
+        # the lower limit is appended to the array outputting the dates used!
+        # This needs to be kept in mind when evaluatign and drawing conclusions!!!
+        datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y')) 
+        
+        #---------------------------------------------------------------------
+        for j in range(1,len(k)):                       #loop for filtering per year 
+            if aa <= k[j][2] < ab:
+                t.append(k[j])
+    #        c=t[0][3]                                       #need to account for the first line
+        #----------------------------------------------------------------------
+        cancel = t[1][4]                                #need to account for the first line
+        c=1                                             #need to account for the first line
+        #----------------------------------------------------------------------
+        for i in range(1,len(t)):                       #loop for the details
+            if t[i][5] == t[i-1][5]:
+                c += 1                                  #frequency increase of 1
+                cancel += t[i][4]                       #number of cancellations
+            if t[i][5] != t[i-1][5]:
+                j = []
+                ratio = round((float(cancel)/c)*100 ,2) #rounding the number (number,digits)
+                j.append(t[i-1][5])                     #making the matrix
+                j.append(c)
+                j.append(cancel)
+                j.append(ratio)
+                freqlist.append(j)
+                c = 1                                   #need to account for the first new
+                cancel = t[i][4]
+        #--------------------------------------------------------------------------
+        cancellist = sorted(freqlist,key=lambda x: x[s] ,reverse=True)
+        cancellist = cancellist[:10]
+        final.append(cancellist)                          #need to accoutn for the first new
+        l += 1
+    return final, datelist
+
+    
+def makebumpplot(csvname, epsname, title, timelabels, top):  # assumed input csv path "Top10csv", assumed image output path "results/rankings"
     
     
+    from matplotlib import pyplot as plt
+    import os
+    import csv
+    import numpy as np
     
+    
+      
+    with open(os.path.join('Top10csv', csvname), 'rb') as csvfile:
+        ranking_raw = csv.reader(csvfile, delimiter=';', quotechar='|')
+        ranking = []
+        i = 0
+        for line in ranking_raw:
+            split = line[0].split(',');
+            if i > 0 and int(split[1].split('"')[1]) <= top:
+                items = []
+                for item in split:
+                    items.append(item.split('"')[1]) # because python sucks
+                ranking.append(items)
+            i += 1
+    
+    
+    n = len(ranking) / top
+    
+    atasint = []
+    for line in ranking:
+        if int(line[0]) not in atasint:
+            atasint.append(int(line[0]))
+            
+    atas = []
+    for ata in atasint:
+        atas.append([ata])
+    
+    
+    k = 0
+    for ata in atas:
+        for i in range(n):
+            temp = 0
+            for j in range(top):
+                idx = i * top + j
+                if ata[0] == int(ranking[idx][0]):
+                    temp = int(ranking[idx][1])
+            if temp != 0:
+                atas[k].append(temp)
+            else:
+                atas[k].append(float('nan'))
+        k += 1
+    
+    atas = np.matrix(atas)
+    atas = atas.T
+    
+    plt.close()
+    plt.figure(figsize=(15./11. + 15./11.*n, 9./11 + 9./11 * top))
+    plt.plot(atas[1:,:])
+    
+    for pythonsucks in range(len(atasint)):
+        plt.scatter(np.arange(n), np.array(atas[1:,pythonsucks]), 800, marker='o', edgecolors = 'k')
+        
+        for x,y in zip( np.arange(n), np.array(atas[1:,pythonsucks]) ):
+            plt.annotate(
+                str(int(np.array(atas[0,pythonsucks]))),
+                xy=(x, y[0]), xytext=(0, 0),
+                textcoords='offset points', ha='center', va='center',
+                size = 'x-large',
+                color = 'white'
+                #bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+                #arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0')
+                )
+            
+    plt.ylim(top+1,0)
+    plt.ylabel('Rank')
+    plt.title(title)
+    plt.yticks(np.arange(top) + 1, np.arange(top) + 1 )
+    plt.xticks(np.arange(n), timelabels, rotation=90)
+    plt.savefig(os.path.join('Results','rankings',epsname), format='eps', dpi=1000)
+    #plt.show()
     
     
     
