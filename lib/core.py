@@ -378,7 +378,63 @@ def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means 
         # =============================================================================
         
     return final, datelist
+
+def getfreqlist(timeframe , interval, k, s): # s is the lambda key:
+                                               # 1 for freqency delays
+                                               # 2 for Frequency cancellations
+                                               # 3 Ratio cancellations over frequency
+    ### author, Till & Laurens ###
+    import numpy as np
+    import datetime
     
+    cancellist = []                                       #frequency per time frame
+    t = []                                              #temporary list for storage
+    i=0
+    j=0
+    l=0
+    final = []         
+    datelist = []                                 #
+    
+    for l in np.arange(timeframe[0]*12, timeframe[1]*12+12,interval):   #overall loop for years. Till put this to 27, since we only have 2016 data until feb or so
+        t = []
+        freqlist = []
+        aa = datetosec(int(np.floor(l/12)),int(l%12)+1,1) # lower limit converted to unix
+        ab = datetosec(int(np.floor((l+interval-1)/12)),int((l+interval-1)%12)+1,31) # upper limit in unix
+        t = []
+        # the lower limit is appended to the array outputting the dates used!
+        # This needs to be kept in mind when evaluatign and drawing conclusions!!!
+        datelist.append(datetime.datetime.fromtimestamp(aa).strftime('%d/%m/%Y')) 
+        
+        #---------------------------------------------------------------------
+        for j in range(1,len(k)):                       #loop for filtering per year 
+            if aa <= k[j][2] < ab:
+                t.append(k[j])
+    #        c=t[0][3]                                       #need to account for the first line
+        #----------------------------------------------------------------------
+        cancel = t[1][4]                                #need to account for the first line
+        c=1                                             #need to account for the first line
+        #----------------------------------------------------------------------
+        for i in range(1,len(t)):                       #loop for the details
+            if t[i][5] == t[i-1][5]:
+                c += 1                                  #frequency increase of 1
+                cancel += t[i][4]                       #number of cancellations
+            if t[i][5] != t[i-1][5]:
+                j = []
+                ratio = round((float(cancel)/c)*100 ,2) #rounding the number (number,digits)
+                j.append(t[i-1][5])                     #making the matrix
+                j.append(c)
+                j.append(cancel)
+                j.append(ratio)
+                freqlist.append(j)
+                c = 1                                   #need to account for the first new
+                cancel = t[i][4]
+        #--------------------------------------------------------------------------
+        cancellist = sorted(freqlist,key=lambda x: x[s] ,reverse=True)
+        cancellist = cancellist[:10]
+        final.append(cancellist)                          #need to accoutn for the first new
+        l += 1
+    return final, datelist
+
     
 def makebumpplot(csvname, epsname, title, timelabels, top):  # assumed input csv path "Top10csv", assumed image output path "results/rankings"
     
@@ -457,7 +513,7 @@ def makebumpplot(csvname, epsname, title, timelabels, top):  # assumed input csv
     plt.yticks(np.arange(top) + 1, np.arange(top) + 1 )
     plt.xticks(np.arange(n), timelabels, rotation=90)
     plt.savefig(os.path.join('Results','rankings',epsname), format='eps', dpi=1000)
-    plt.show()
+    #plt.show()
     
     
     
