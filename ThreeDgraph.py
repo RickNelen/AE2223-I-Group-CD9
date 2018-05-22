@@ -85,8 +85,8 @@ for year in range(len(delay)):
     ax = fig.add_subplot(1, 1, 1, axisbg="1.0")
     ax = fig.gca(projection='3d')
      
-    for data, color, group in zip(data, colors, groups):
-        x, y, z = data
+    for datainst, color, group in zip(data, colors, groups):
+        x, y, z = datainst
         ax.scatter(x, y, z, alpha=0.65, c=color, s=10, label=group)
     
     ax.set_xlim(0,20000)
