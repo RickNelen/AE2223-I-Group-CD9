@@ -10,3 +10,4 @@ k = core.unpickle("./Data.txt")                                                 
 k = core.sortata(k, 4)
 delay, date = core.getdelaylist([1988,2015],36,k)                               #getting the data ready till here
 output = core.ThreeDgraph(delay, 3, 0)
+
