@@ -264,7 +264,7 @@ def lstsquares(model, n, beta, data, h=1e-4): # obsolete, cause I am now using a
 
 
 
-def fitweibull(histo, plot = 0):
+def fitweibull(histo, plot = 0, plottitle = ""):
     # takes _one_ normalized histogram from np.histogram and fits a weibull to it using init guess k=1.5, lambda = 20.
     # now uses scipy builtin function for the fitting
     
@@ -325,7 +325,8 @@ def fitweibull(histo, plot = 0):
             yfit = weibull(xplot,fb[0], fb[1])
             
             plt.close()
-            plt.title("ATA Component 324 -- Year 2008 -- Stdev: %.1f min -- parcor %.3f" % (np.sqrt(v), cov[0,1]) )
+            #plt.title("ATA Component 324 -- Year 2008 -- Stdev: %.1f min -- parcor %.3f" % (np.sqrt(v), cov[0,1]) )
+            plt.title(plottitle + " -- Stdev: %.1f min -- parcor %.3f" % (np.sqrt(v), cov[0,1]) )
             plt.xlabel("Delay Time [min]")
             plt.ylabel("Density")
             plt.plot(xplot,yfit)
@@ -337,8 +338,36 @@ def fitweibull(histo, plot = 0):
         i += 1
         
     
-    return (fitbeta, mean, var)
+    return (fitbeta, mean, var, cov[0,1])
     
+    
+def polynomial_fit(x,y,degree, plot): # x and y are separate lists of values. Degree is an integer. Plot is for debugging, either 0 or 1
+    # this is a quick shortcut for getting the coefficients of a polinomial of "degree" degrees.
+    # in any case, the covariance matrix is output using some bayesian method (sound good at least)
+    # also I include the pearson r which indiates the linear correlation (regardless of offsets btw)
+    # of the dataset on a scale from -1 (negatively correlated) over 0 (not linearly correlated) to 1 (positively correlated)
+        
+    from numpy import polyfit, linspace
+    from scipy.stats import pearsonr
+    
+    # do the fitting using linear least squares with the Vdm matrix
+    p, V = polyfit(x,y,degree, cov = True)
+    
+    # get the (linear correlation) using the pearson correlation coefficient
+    r = pearsonr(x,y)
+    
+    if plot:
+        from matplotlib import pyplot as plt
+        xcomp = linspace(min(x), max(x), 101)
+        ycomp = 0
+        for i in range(degree+1): # getting the linear solution using a sort-of dot product with the coefficients vector p and all the x points (to the power of the degree the current coefficient p[i] corresponds to)
+            ycomp += xcomp**i * p[i]
+            
+        plt.plot(xcomp,ycomp)
+        plt.scatter(x,y)
+        plt.title(str(p))
+    
+    return p, V, r
     
     
     

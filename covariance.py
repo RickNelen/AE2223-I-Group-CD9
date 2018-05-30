@@ -13,16 +13,20 @@ from mpl_toolkits.mplot3d import Axes3D
 k = core.unpickle("./Data.txt")                                                 #getting the data ready
 k = core.sortata(k, 4)
 delay, date = core.getdelaylist([1988,2015],36,k)                               #getting the data ready till here
-output = core.ThreeDgraph(delay, 1, 0)
+output = core.ThreeDgraph(delay, 2, 0)
 
 columns = [[], [], []]
 for line in output:
-    if line[1] > 100: # can be used for filtering
+    if line[1] > 0: # can be used for filtering
         columns[0].append(line[0])
         columns[1].append(line[1])
         columns[2].append(line[2])
     
 data = np.array(columns)
+data = data.astype(float)
+data[0] = data[0] / float(max(data[0]))
+data[1] = data[1] / float(max(data[1]))
+data[2] = data[2] / float(max(data[2]))
 
 covmat = np.cov(data)   # get covariance matrix
 eigvals, eigvecs = np.linalg.eig(covmat) # get eigenstuff
@@ -126,9 +130,34 @@ def plane_plane_intersect(N1,A1,N2,A2):
     
     return P,N,check
 
+
+# plotting
+
+# level lines
+fig2 = plt.figure()
+ax = fig2.add_subplot(111)
+for z in np.linspace(0,max(data[2]),5):
+    P2, N2, check2 = plane_plane_intersect(np.array([0., 0., 1.]), np.array([0., 0., float(z)]), np.cross(eigvecs[:,maxevs[0]],eigvecs[:,maxevs[1]]), mpoint)
+    a = N2[1]/N2[0]
+    b = P2[1] - P2[0]* N2[1]/N2[0]
+    x = np.linspace(0,max(data[0]), 101)
+    y = a*x+b
+    ax.plot(x,y, label="Cancellation frequency %.2f" % z)
+    #print ("Equation of the line: y = %f x + %f" % (N2[1]/N2[0], P2[1] - P2[0]* N2[1]/N2[0]))
+
+x = data[0]
+y = data[1]
+z = data[2]
+ax.scatter(x,y,z/float(max(z)) * 50, label='Data, size proportional to cancellations')
+plt.title('Level curves of the dimensionality reduction plane')
+plt.xlabel('Total delay time')
+plt.ylabel('Delay frequency')
+plt.ylim((0, max(data[1])))
+ax.legend()
+
+
+# 3 dim
 P,N,check = plane_plane_intersect(np.array([0., 0., 1.]), np.array([0., 0., 0.]), np.cross(eigvecs[:,maxevs[0]],eigvecs[:,maxevs[1]]), mpoint)
-
-
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 #ax.set_aspect('equal')

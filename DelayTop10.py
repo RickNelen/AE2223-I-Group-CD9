@@ -30,6 +30,8 @@ for top in [3,5,10]:
                     a = core.sortata(a, atalevel)
                     final, datelist = core.getdelaylist([beginyear,2015], interval, a)
                     
+                    
+                    
                     for w in range(len(final)):
                         for l in range(10):
                             #print w, k

@@ -365,7 +365,7 @@ def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means 
         temp = [t[0][5], t[0][3]]
         cancel = 0
         almostfinal = []
-        
+                
         for i in range(1,len(t)):
             if t[i][5] == t[i-1][5]:
                 if t[i][4] == 0:
@@ -384,9 +384,9 @@ def getdelaylist(timeframe , interval, k): # interval in months, type = 0 means 
                     cancel = t[i][4]
     #        if i == (len(t)-1):
                 
-        atadel = [temp[0], sum(temp[1:len(temp)]), (len(temp)-1), cancel, round((float(cancel)/((len(temp)-1)+cancel)),2)]#pure chaos
-        atadel.append(temp[1:len(temp)])
-        almostfinal.append(atadel)
+#        atadel = [temp[0], sum(temp[1:len(temp)]), (len(temp)-1), cancel, round((float(cancel)/((len(temp)-1)+cancel)),2)]#pure chaos
+#        atadel.append(temp[1:len(temp)])
+#        almostfinal.append(atadel)
         almostfinal.sort(key=lambda x: x[1], reverse=True)
         atadel = []
         final.append(almostfinal)
