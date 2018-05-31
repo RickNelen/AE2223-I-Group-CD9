@@ -13,7 +13,7 @@ from mpl_toolkits.mplot3d import Axes3D
 k = core.unpickle("./Data.txt")                                                 #getting the data ready
 k = core.sortata(k, 4)
 delay, date = core.getdelaylist([1988,2015],36,k)                               #getting the data ready till here
-output = core.ThreeDgraph(delay, 2, 0)
+output = core.ThreeDgraph(delay, [0,1,2], 0)
 
 columns = [[], [], []]
 for line in output:

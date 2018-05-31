@@ -543,6 +543,9 @@ def makebumpplot(csvname, epsname, title, timelabels, top):  # assumed input csv
     
     
 def ThreeDgraph(delay, periodnumber, graph):
+    # delay is first output of getdelaylist.
+    # Period number is the integer indicator which period (indices of the top level "delay" list to be used) is used
+    # 
     import numpy as np
     import matplotlib.pyplot as plt
     from mpl_toolkits import mplot3d
@@ -627,7 +630,7 @@ def ThreeDgraph(delay, periodnumber, graph):
         zz = list(zz)
         lstx = [zz[:-1],(max(xtot)*zz[0]+zz[:-1])]
         lsty = [0,max(xtot)]
-        if year == periodnumber:
+        if year in periodnumber:
             for jk in range(len(xtot)):
                 temp12 = []
                 temp12.append(xtot[jk])
