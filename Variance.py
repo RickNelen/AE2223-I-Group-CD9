@@ -86,16 +86,19 @@ for yeardata in final_delay:
         #bins = range(delays.min(), delays.max(), binsize) # used for debugging
         hist = [delays, np.histogram(delays, range=[delaycutoff,delays.max()], bins='fd', density=True)]
     
-        if False: #ata == 324 and j == 20:
-            (fitbeta, mean, var, cov) = numericals.fitweibull(hist, 1, "Ata %d -- " % ata + datetime.datetime.fromtimestamp(ll).strftime('%Y-%m') + " to " + datetime.datetime.fromtimestamp(ul).strftime('%Y-%m') + " -- Interval %d Months" % interv) # also plot it, that's what the 1 is for
+        if ata == 32:# and j == 20:
+            print "test"
+            (fitbeta, mean, var, cov, chisqarr, parr) = numericals.fitweibull(hist, 1, "Ata %d -- " % ata + datetime.datetime.fromtimestamp(ll).strftime('%Y-%m') + " to " + datetime.datetime.fromtimestamp(ul).strftime('%Y-%m') + " -- Interval %d Months" % interv) # also plot it, that's what the 1 is for
         else:
-            (fitbeta, mean, var, cov) = numericals.fitweibull(hist, 0)
+            (fitbeta, mean, var, cov, chisqarr, parr) = numericals.fitweibull(hist, 0)
         
         
         final_delay[j][k].append(fitbeta[0]) # don't remember why they are 1 component lists in this case... the [0] makes it a little neater
         final_delay[j][k].append(mean[0])
         final_delay[j][k].append(var[0])
         final_delay[j][k].append(cov[0])
+        final_delay[j][k].append(chisqarr[0])
+        final_delay[j][k].append(parr[0])
         
         k += 1
         
@@ -120,6 +123,8 @@ for yeardata in final_delay:
         intl.append(yeardata[k][7])   # DelMean
         intl.append(np.sqrt(yeardata[k][8]))   # DelStdDev
         intl.append(yeardata[k][9])   # Parameter covariance matrix off-diagonal
+        intl.append(yeardata[k][10])   # Chisq value
+        intl.append(yeardata[k][11])   # p value
         
         newl.append(intl)
         intl = []
@@ -127,7 +132,7 @@ for yeardata in final_delay:
         
 with open("DelayVariancesTotalTop10.csv", 'wb') as myfile:
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    wr.writerow(['ATA', 'Rank', 'TotDelay', 'Date', 'Weibk', 'WeibLamb', 'DelMean', 'DelStdDev', 'rho_xy'])
+    wr.writerow(['ATA', 'Rank', 'TotDelay', 'Date', 'Weibk', 'WeibLamb', 'DelMean', 'DelStdDev', 'rho_xy', 'chisq', 'p'])
     for row in newl:
         wr.writerow(row)
 

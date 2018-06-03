@@ -272,6 +272,7 @@ def fitweibull(histo, plot = 0, plottitle = ""):
     import scipy.special as sp # import the special functions for gamma
     import matplotlib.pyplot as plt
     from scipy.optimize import curve_fit
+    from scipy.stats import chisquare
     
     # model function: weibull
     #def weibull(beta, x):
@@ -284,6 +285,7 @@ def fitweibull(histo, plot = 0, plottitle = ""):
     fitbeta = []
     mean    = []
     var     = []
+    cov     = []
 #    pval    = []
 #    iternum = []
     
@@ -293,7 +295,7 @@ def fitweibull(histo, plot = 0, plottitle = ""):
     #(fb, p, it) = lstsquares(weibull, 2, np.transpose([np.array([1.,20.])]), np.concatenate((np.matrix(histo[1][1][1:]).T, np.matrix(histo[1][0]).T), axis = 1) )
    
     try:
-        fb, cov = curve_fit(weibull, histo[1][1][1:], histo[1][0], [1.5, 20.]) # I ditched my own implementation and used this one
+        fb, c = curve_fit(weibull, histo[1][1][1:], histo[1][0], [1.5, 20.]) # I ditched my own implementation and used this one
     except RuntimeError:
         fb = np.array([0,0])
     except ValueError:
@@ -304,6 +306,7 @@ def fitweibull(histo, plot = 0, plottitle = ""):
         fitbeta.append(np.array([0,0]))
         mean.append(0)
         var.append(0)
+        cov.append(0)
 #        pval.append(0)
 #        iternum.append(0)
         
@@ -318,6 +321,7 @@ def fitweibull(histo, plot = 0, plottitle = ""):
         fitbeta.append(fb)
         mean.append(m)
         var.append(v)
+        cov.append(c[0,1])
     
         #optional plotting
         if plot:
@@ -326,7 +330,7 @@ def fitweibull(histo, plot = 0, plottitle = ""):
             
             plt.close()
             #plt.title("ATA Component 324 -- Year 2008 -- Stdev: %.1f min -- parcor %.3f" % (np.sqrt(v), cov[0,1]) )
-            plt.title(plottitle + " -- Stdev: %.1f min -- parcor %.3f" % (np.sqrt(v), cov[0,1]) )
+            plt.title(plottitle + " -- Stdev: %.1f min -- parcor %.3f" % (np.sqrt(v), c[0,1]) )
             plt.xlabel("Delay Time [min]")
             plt.ylabel("Density")
             plt.plot(xplot,yfit)
@@ -336,9 +340,21 @@ def fitweibull(histo, plot = 0, plottitle = ""):
             plt.show()
         
         i += 1
-        
     
-    return (fitbeta, mean, var, cov[0,1])
+    #calculate xi squared
+    yobslarge = histo[1][0] > 1e-3 # otherwise the chi squared skyrockets since the expectation is in the denominator
+    yobs  = histo[1][0][yobslarge] # observations
+    yest  = weibull(histo[1][1][1:][yobslarge], fitbeta[0][0], fitbeta[0][1]) # estimation based on the found parameters
+    
+    
+    chisq, p = chisquare(yobs, yest)
+    
+    chisqarr = []
+    parr = []
+    chisqarr.append(chisq)
+    parr.append(p)
+    
+    return (fitbeta, mean, var, cov, chisqarr, parr)
     
     
 def polynomial_fit(x,y,degree, plot): # x and y are separate lists of values. Degree is an integer. Plot is for debugging, either 0 or 1
@@ -361,7 +377,7 @@ def polynomial_fit(x,y,degree, plot): # x and y are separate lists of values. De
         xcomp = linspace(min(x), max(x), 101)
         ycomp = 0
         for i in range(degree+1): # getting the linear solution using a sort-of dot product with the coefficients vector p and all the x points (to the power of the degree the current coefficient p[i] corresponds to)
-            ycomp += xcomp**i * p[i]
+            ycomp += xcomp**i * p[degree-i]
             
         plt.plot(xcomp,ycomp)
         plt.scatter(x,y)
@@ -370,7 +386,87 @@ def polynomial_fit(x,y,degree, plot): # x and y are separate lists of values. De
     return p, V, r
     
     
+def plane_plane_intersect(N1,A1,N2,A2):
+#    %plane_intersect computes the intersection of two planes(if any)
+#    % Inputs: 
+#    %       N1: normal vector to Plane 1
+#    %       A1: any point that belongs to Plane 1
+#    %       N2: normal vector to Plane 2
+#    %       A2: any point that belongs to Plane 2
+#    %
+#    %Outputs:
+#    %   P    is a point that lies on the interection straight line.
+#    %   N    is the direction vector of the straight line
+#    % check is an integer (0:Plane 1 and Plane 2 are parallel' 
+#    %                              1:Plane 1 and Plane 2 coincide
+#    %                              2:Plane 1 and Plane 2 intersect)
+#    %
+#    % Example:
+#    % Determine the intersection of these two planes:
+#    % 2x - 5y + 3z = 12 and 3x + 4y - 3z = 6
+#    % The first plane is represented by the normal vector N1=[2 -5 3]
+#    % and any arbitrary point that lies on the plane, ex: A1=[0 0 4]
+#    % The second plane is represented by the normal vector N2=[3 4 -3]
+#    % and any arbitrary point that lies on the plane, ex: A2=[0 0 -2]
+#    %[P,N,check]=plane_intersect([2 -5 3],[0 0 4],[3 4 -3],[0 0 -2]);
+#
+#    %This function is written by :
+#    %                             Nassim Khaled
+#    %                             Wayne State University
+#    %                             Research Assistant and Phd candidate
+#    %If you have any comments or face any problems, please feel free to leave
+#    %your comments and i will try to reply to you as fast as possible.
+
+    import numpy as np
     
+    P=np.array([0., 0., 0.])
+    N=np.cross(N1, N2);
+
+    #%  test if the two planes are parallel
+    if np.linalg.norm(N) < 10e-7:                #% Plane 1 and Plane 2 are near parallel
+        V=A1-A2;
+        if (np.dot(N1,V) == 0):
+            check=1;                    #% Plane 1 and Plane 2 coincide
+            return P,N,check
+        else:
+            check=0;                   #%Plane 1 and Plane 2 are disjoint
+            return P,N,check
+
+
+    check=2;
+
+    #% Plane 1 and Plane 2 intersect in a line
+    #%first determine max abs coordinate of cross product
+    b = np.array([0,1,2])
+    maxc=b[abs(N)==max(abs(N))]
+
+
+    #%next, to get a point on the intersection line and
+    #%zero the max coord, and solve for the other two
+
+    d1 = -np.dot(N1, A1)  #%the constants in the Plane 1 equations
+    d2 = -np.dot(N2, A2)  #%the constants in the Plane 2 equations
+#
+#    print d1,d2
+#    print N
+#    print N1
+#    print N2
+    
+    if maxc == 0: #% intersect with x=0
+        P[0]= 0
+        P[1] = (d2*N1[2] - d1*N2[2])/ N[0]
+        P[2] = (d1*N2[1] - d2*N1[1])/ N[0]
+    elif maxc == 1: 
+        
+        P[0] = (d1*N2[2] - d2*N1[2])/ N[1]
+        P[1] = 0
+        P[2] = (d2*N1[0] - d1*N2[0])/ N[1]
+    elif maxc == 2:
+        P[0] = (d2*N1[1] - d1*N2[1])/ N[2]
+        P[1] = (d1*N2[0] - d2*N1[0])/ N[2]
+        P[2] = 0
+    
+    return P,N,check
     
     
     

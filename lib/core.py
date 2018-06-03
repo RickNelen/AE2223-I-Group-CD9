@@ -630,6 +630,7 @@ def ThreeDgraph(delay, periodnumber, graph):
         zz = list(zz)
         lstx = [zz[:-1],(max(xtot)*zz[0]+zz[:-1])]
         lsty = [0,max(xtot)]
+        count = 0
         if year in periodnumber:
             for jk in range(len(xtot)):
                 temp12 = []
@@ -637,6 +638,8 @@ def ThreeDgraph(delay, periodnumber, graph):
                 temp12.append(ytot[jk])
                 temp12.append(ztot[jk])
                 output.append(temp12)
+                count += 1
+                    
         if graph == True:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1, axisbg="1.0")

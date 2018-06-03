@@ -5,6 +5,8 @@ Created on Tue May 08 16:12:29 2018
 @author: Laurens
 """
 
+# plots the time history of a compontent on an 
+
 import lib.core as core
 import matplotlib.pyplot as plt
 import matplotlib as mpl
